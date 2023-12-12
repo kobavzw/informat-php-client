@@ -13,7 +13,8 @@
         "php": "^8.1.0",
         "psr/http-client-implementation": "*",
         "psr/http-factory-implementation": "*",
-        "php-http/discovery": "^1.19"
+        "php-http/discovery": "^1.19",
+        "json-mapper/json-mapper": "^2.21"
     },
     "autoload": {
         "psr-4": {
