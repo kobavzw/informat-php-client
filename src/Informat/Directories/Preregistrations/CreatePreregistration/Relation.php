@@ -9,6 +9,10 @@ class Relation
     protected int $type;
     protected string $lastName;
     protected string $firstName;
+    protected ?string $phone = null;
+    protected ?string $mobilePhone = null;
+    protected ?string $email = null;
+    protected ?string $insz = null;
 
     /** @var null|array<string,mixed> $address */
     protected ?array $address = null;
@@ -123,6 +127,57 @@ class Relation
     }
 
     /**
+     * Domicile phone number
+     */
+    public function setPhone(?string $phone): self
+    {
+        if ($phone !== null && strlen($phone) > 20) {
+            throw new ValidationException('Telefoonnummer mag maximum 20 karakters bevatten.');
+        }
+
+        $this->phone = $phone;
+        return $this;
+    }
+
+    /**
+     * Own mobile number
+     */
+    public function setMobilePhone(?string $mobilePhone): self
+    {
+        if ($mobilePhone !== null && strlen($mobilePhone) > 20) {
+            throw new ValidationException('GSM nummer mag maximum 20 karakters bevatten.');
+        }
+
+        $this->mobilePhone = $mobilePhone;
+        return $this;
+    }
+
+    /**
+     * Private email address
+     */
+    public function setEmail(?string $email): self
+    {
+        if ($email !== null && false === filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new ValidationException('Ongeldig e-mailadres.');
+        }
+
+        $this->email = $email;
+        return $this;
+    }
+
+    /**
+     * The relation’s national registration number.
+     * 
+     * This is either the Bisnummer, for foreign pupil, or
+     * Rijksregisternummer for Belgium residents.
+     */
+    public function setInsz(?string $insz): self
+    {
+        $this->insz = $insz;
+        return $this;
+    }
+
+    /**
      * @return array<string,mixed>
      */
     public function toArray(): array
@@ -132,6 +187,10 @@ class Relation
             'lastName' => $this->lastName,
             'firstName' => $this->firstName,
             'Address' => $this->address,
+            'phone' => $this->phone,
+            'mobilePhone' => $this->phone,
+            'email' => $this->email,
+            'insz' => $this->insz,
         ];
     }
 }

@@ -5,6 +5,7 @@ namespace Koba\Informat\Directories\Preregistrations;
 use DateTime;
 use Koba\Informat\Call\CallProcessor;
 use Koba\Informat\Directories\Preregistrations\CreatePreregistration\CreatePreregistrationCall;
+use Koba\Informat\Directories\Preregistrations\DeletePreregistration\DeletePreregistrationCall;
 use Koba\Informat\Directories\Preregistrations\GetPreregistrationStatus\GetPreregistrationStatusCall;
 
 class PreregistrationsDirectory
