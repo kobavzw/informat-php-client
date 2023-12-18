@@ -47,7 +47,7 @@ implements CallInterface
     protected DateTime $startDate;
     protected int $registrationStatus;
     public ?string $remark = null;
-    public ?bool $assignedViaRegistrationSystem = null;
+    public bool $assignedViaRegistrationSystem = false;
 
     /** @var Relation[] $relations */
     protected array $relations = [];
@@ -99,7 +99,7 @@ implements CallInterface
             'setRegistrationStatus' => $registrationStatus
         ] as $fn => $value) {
             try {
-                call_user_func([$this, $fn], [$value]);
+                call_user_func([$this, $fn], $value);
             } catch (ValidationException $e) {
                 $errors = [...$errors, ...$e->getErrors()];
             }
@@ -534,7 +534,7 @@ implements CallInterface
      * 
      * The (default) value is false, if not provided.
      */
-    public function setAssignedViaRegistrationSystem(?bool $assignedViaRegistrationSystem): self
+    public function setAssignedViaRegistrationSystem(bool $assignedViaRegistrationSystem): self
     {
         $this->assignedViaRegistrationSystem = $assignedViaRegistrationSystem;
         return $this;
