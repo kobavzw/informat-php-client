@@ -46,7 +46,8 @@ class CallProcessor
                 $this->buildUrl($endpoint)
             )
             ->withAddedHeader('Authorization', 'BEARER ' . $this->accessTokenManager->getAccessToken())
-            ->withAddedHeader('InstituteNo', (string)$instituteNumber);
+            ->withAddedHeader('InstituteNo', (string)$instituteNumber)
+            ->withAddedHeader('Content-Type', 'application/json');;
 
         if ($content !== null) {
             if (is_array($content)) {
