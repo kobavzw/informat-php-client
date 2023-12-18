@@ -1,6 +1,6 @@
 <?php
 
-namespace Koba\Informat\Directories\Preregistrations;
+namespace Koba\Informat\Directories\Preregistrations\DeletePreregistration;
 
 use Koba\Informat\Call\CallInterface;
 use Koba\Informat\Call\CallProcessor;
