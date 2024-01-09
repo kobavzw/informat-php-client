@@ -188,7 +188,7 @@ class Relation
             'firstName' => $this->firstName,
             'Address' => $this->address,
             'phone' => $this->phone,
-            'mobilePhone' => $this->phone,
+            'mobilePhone' => $this->mobilePhone,
             'email' => $this->email,
             'insz' => $this->insz,
         ];
