@@ -28,40 +28,30 @@ class CallProcessor
         return self::BASE_URL . ltrim($endpoint, '/');
     }
 
-    /**
-     * @param string $method 
-     * @param string $endpoint 
-     * @param InstituteNumber $instituteNumber 
-     * @param null|array<mixed>|string $content 
-     */
-    public function send(
+    public function buildRequest(
         string $method,
         string $endpoint,
-        InstituteNumber $instituteNumber,
-        array|string|null $content = null,
-    ): ResponseInterface {
-        $request = $this->requestFactory
-            ->createRequest(
-                $method,
-                $this->buildUrl($endpoint)
-            )
-            ->withAddedHeader('Authorization', 'BEARER ' . $this->accessTokenManager->getAccessToken())
-            ->withAddedHeader('InstituteNo', (string)$instituteNumber)
-            ->withAddedHeader('Content-Type', 'application/json');;
+        InstituteNumber $instituteNumber
+    ): EncapsulatedRequest {
+        return new EncapsulatedRequest(
+            $this->requestFactory
+                ->createRequest(
+                    $method,
+                    $this->buildUrl($endpoint)
+                )
+                ->withAddedHeader(
+                    'Authorization',
+                    'BEARER ' . $this->accessTokenManager->getAccessToken()
+                )
+                ->withAddedHeader('InstituteNo', (string)$instituteNumber)
+                ->withAddedHeader('Content-Type', 'application/json'),
+            $this->streamFactory
+        );
+    }
 
-        if ($content !== null) {
-            if (is_array($content)) {
-                $content = json_encode($content);
-            }
-
-            if ($content === false) {
-                throw new InternalErrorException('Invalid call content.');
-            }
-
-            $request = $request->withBody($this->streamFactory->createStream($content));
-        }
-
-        $response = $this->httpClient->sendRequest($request);
+    public function send(EncapsulatedRequest $request): ResponseInterface
+    {
+        $response = $this->httpClient->sendRequest($request->getRequest());
 
         if ($response->getStatusCode() === 200) {
             return $response;

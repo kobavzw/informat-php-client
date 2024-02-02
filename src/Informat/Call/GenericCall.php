@@ -31,13 +31,27 @@ abstract class GenericCall
         $this->instituteNumber = new InstituteNumber($instituteNumber);
     }
 
+    protected function getApiVersion(): ?string
+    {
+        return null;
+    }
+
     protected function performRequest(): ResponseInterface
     {
-        return $this->callProcessor->send(
+        $request = $this->callProcessor->buildRequest(
             $this->getMethod(),
             $this->getEndpoint(),
-            $this->instituteNumber,
-            $this->getBody()
+            $this->instituteNumber
         );
+
+        if ($this->getBody() !== null) {
+            $request->withBody($this->getBody());
+        }
+
+        if ($this->getApiVersion() !== null) {
+            $request->withVersion($this->getApiVersion());
+        }
+
+        return $this->callProcessor->send($request);
     }
 }
