@@ -5,7 +5,7 @@ namespace Koba\Informat\Call;
 use Koba\Informat\Helpers\InstituteNumber;
 use Psr\Http\Message\ResponseInterface;
 
-abstract class GenericCall
+abstract class AbstractCall
 {
     protected InstituteNumber $instituteNumber;
     protected CallProcessor $callProcessor;
@@ -36,11 +36,21 @@ abstract class GenericCall
         return null;
     }
 
+    private function getEndpointWithQueryParams(): string
+    {
+        $endpoint = $this->getEndpoint();
+        if ($this instanceof HasQueryParamsInterface) {
+            $endpoint .= "?{$this->getQueryParamString()}";
+        }
+
+        return $endpoint;
+    }
+
     protected function performRequest(): ResponseInterface
     {
         $request = $this->callProcessor->buildRequest(
             $this->getMethod(),
-            $this->getEndpoint(),
+            $this->getEndpointWithQueryParams(),
             $this->instituteNumber
         );
 

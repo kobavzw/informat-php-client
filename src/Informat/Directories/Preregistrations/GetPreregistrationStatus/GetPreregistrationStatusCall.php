@@ -2,13 +2,13 @@
 
 namespace Koba\Informat\Directories\Preregistrations\GetPreregistrationStatus;
 
+use Koba\Informat\Call\AbstractCall;
 use Koba\Informat\Call\CallInterface;
 use Koba\Informat\Call\CallProcessor;
-use Koba\Informat\Call\GenericCall;
 use Koba\Informat\Helpers\JsonMapper;
 
 class GetPreregistrationStatusCall
-extends GenericCall
+extends AbstractCall
 implements CallInterface
 {
     public function __construct(

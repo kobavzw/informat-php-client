@@ -3,19 +3,20 @@
 namespace Koba\Informat\Directories\Students\GetStudents;
 
 use DateTime;
+use Koba\Informat\Call\AbstractCall;
 use Koba\Informat\Call\CallInterface;
 use Koba\Informat\Call\CallProcessor;
-use Koba\Informat\Call\GenericCall;
+use Koba\Informat\Call\HasQueryParamsInterface;
+use Koba\Informat\Call\HasQueryParamsTrait;
 use Koba\Informat\Helpers\JsonMapper;
 use Koba\Informat\Helpers\Schoolyear;
 use Koba\Informat\Responses\Students\Student;
 
 class GetStudentsCall
-extends GenericCall
-implements CallInterface
+extends AbstractCall
+implements CallInterface, HasQueryParamsInterface
 {
-    /** @var array<string,string> $queryParams */
-    protected array $queryParams = [];
+    use HasQueryParamsTrait;
 
     public function __construct(
         CallProcessor $callProcessor,
@@ -24,7 +25,10 @@ implements CallInterface
     ) {
         $this->setCallProcessor($callProcessor);
         $this->setInstituteNumber($instituteNumber);
-        $this->queryParams['schoolYear'] = (string)(new Schoolyear($schoolyear));
+        $this->setQueryParam(
+            'schoolYear',
+            (string)(new Schoolyear($schoolyear))
+        );
     }
 
     protected function getMethod(): string
@@ -34,7 +38,7 @@ implements CallInterface
 
     protected function getEndpoint(): string
     {
-        return '1/students?' . http_build_query($this->queryParams);
+        return '1/students';
     }
 
     /**
@@ -48,7 +52,7 @@ implements CallInterface
      */
     public function setReferenceDate(DateTime $date): self
     {
-        $this->queryParams['refdate'] = $date->format('Y-m-d');
+        $this->setQueryParam('refdate', $date->format('Y-m-d'));
         return $this;
     }
 
@@ -60,7 +64,7 @@ implements CallInterface
      */
     public function setChangedSince(DateTime $date): self
     {
-        $this->queryParams['changedSince'] = $date->format('c');
+        $this->setQueryParam('changedSince', $date->format('c'));
         return $this;
     }
 

@@ -2,12 +2,12 @@
 
 namespace Koba\Informat\Directories\Preregistrations\DeletePreregistration;
 
+use Koba\Informat\Call\AbstractCall;
 use Koba\Informat\Call\CallInterface;
 use Koba\Informat\Call\CallProcessor;
-use Koba\Informat\Call\GenericCall;
 
 class DeletePreregistrationCall
-extends GenericCall
+extends AbstractCall
 implements CallInterface
 {
     public function __construct(
