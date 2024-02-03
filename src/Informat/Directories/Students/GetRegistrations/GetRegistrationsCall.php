@@ -4,7 +4,6 @@ namespace Koba\Informat\Directories\Students\GetRegistrations;
 
 use DateTime;
 use Koba\Informat\Call\AbstractCall;
-use Koba\Informat\Call\CallInterface;
 use Koba\Informat\Call\CallProcessor;
 use Koba\Informat\Call\HasQueryParamsInterface;
 use Koba\Informat\Call\HasQueryParamsTrait;
@@ -14,7 +13,7 @@ use Koba\Informat\Responses\Students\Registration;
 
 class GetRegistrationsCall
 extends AbstractCall
-implements CallInterface, HasQueryParamsInterface
+implements HasQueryParamsInterface
 {
     use HasQueryParamsTrait;
 

@@ -4,7 +4,6 @@ namespace Koba\Informat\Directories\Preregistrations\CreatePreregistration;
 
 use DateTime;
 use Koba\Informat\Call\AbstractCall;
-use Koba\Informat\Call\CallInterface;
 use Koba\Informat\Call\CallProcessor;
 use Koba\Informat\Exceptions\ValidationException;
 use Koba\Informat\Helpers\JsonMapper;
@@ -12,7 +11,6 @@ use Koba\Informat\Helpers\Schoolyear;
 
 class CreatePreregistrationCall
 extends AbstractCall
-implements CallInterface
 {
     protected string $lastName;
     protected string $firstName;

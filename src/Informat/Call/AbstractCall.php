@@ -5,7 +5,7 @@ namespace Koba\Informat\Call;
 use Koba\Informat\Helpers\InstituteNumber;
 use Psr\Http\Message\ResponseInterface;
 
-abstract class AbstractCall
+abstract class AbstractCall implements CallInterface
 {
     protected InstituteNumber $instituteNumber;
     protected CallProcessor $callProcessor;
