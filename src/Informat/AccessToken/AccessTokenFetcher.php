@@ -24,7 +24,7 @@ class AccessTokenFetcher
     {
         $request = $this->requestFactory
             ->createRequest(
-                'post',
+                'POST',
                 'https://www.identityserver.be/connect/token'
             )
             ->withAddedHeader('Content-Type', 'application/x-www-form-urlencoded')

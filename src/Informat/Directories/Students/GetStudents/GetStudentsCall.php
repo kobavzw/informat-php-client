@@ -25,10 +25,7 @@ implements HasQueryParamsInterface
     ) {
         $this->setCallProcessor($callProcessor);
         $this->setInstituteNumber($instituteNumber);
-        $this->setQueryParam(
-            'schoolYear',
-            (string)(new Schoolyear($schoolyear))
-        );
+        $this->setQueryParam('schoolYear', new Schoolyear($schoolyear));
     }
 
     protected function getMethod(): HttpMethod
