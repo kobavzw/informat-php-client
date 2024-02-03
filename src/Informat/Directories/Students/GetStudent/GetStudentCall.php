@@ -4,9 +4,9 @@ namespace Koba\Informat\Directories\Students\GetStudent;
 
 use DateTime;
 use Koba\Informat\Call\AbstractCall;
-use Koba\Informat\Call\CallProcessor;
 use Koba\Informat\Call\HasQueryParamsInterface;
 use Koba\Informat\Call\HasQueryParamsTrait;
+use Koba\Informat\Directories\DirectoryInterface;
 use Koba\Informat\Enums\HttpMethod;
 use Koba\Informat\Helpers\JsonMapper;
 use Koba\Informat\Helpers\Schoolyear;
@@ -19,12 +19,12 @@ implements HasQueryParamsInterface
     use HasQueryParamsTrait;
 
     public function __construct(
-        CallProcessor $callProcessor,
+        DirectoryInterface $directory,
         string $instituteNumber,
         protected string $studentId,
         null|int|string $schoolyear,
     ) {
-        $this->setCallProcessor($callProcessor);
+        $this->setDirectory($directory);
         $this->setInstituteNumber($instituteNumber);
         $this->setQueryParam('schoolYear', new Schoolyear($schoolyear));
     }

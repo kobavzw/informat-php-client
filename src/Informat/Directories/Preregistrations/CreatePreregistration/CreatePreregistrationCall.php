@@ -4,7 +4,7 @@ namespace Koba\Informat\Directories\Preregistrations\CreatePreregistration;
 
 use DateTime;
 use Koba\Informat\Call\AbstractCall;
-use Koba\Informat\Call\CallProcessor;
+use Koba\Informat\Directories\DirectoryInterface;
 use Koba\Informat\Enums\HttpMethod;
 use Koba\Informat\Exceptions\ValidationException;
 use Koba\Informat\Helpers\JsonMapper;
@@ -52,7 +52,7 @@ extends AbstractCall
     protected array $relations = [];
 
     public function __construct(
-        CallProcessor $callProcessor,
+        DirectoryInterface $directory,
         string $instituteNumber,
         string $lastName,
         string $firstName,
@@ -72,7 +72,7 @@ extends AbstractCall
         DateTime $startDate,
         int $registrationStatus,
     ) {
-        $this->setCallProcessor($callProcessor);
+        $this->setDirectory($directory);
 
         /** @var string[] $errors */
         $errors = [];

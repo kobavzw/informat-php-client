@@ -3,23 +3,28 @@
 namespace Koba\Informat\Directories\Preregistrations;
 
 use DateTime;
-use Koba\Informat\Call\CallProcessor;
+use Koba\Informat\Directories\AbstractDirectory;
+use Koba\Informat\Directories\DirectoryInterface;
 use Koba\Informat\Directories\Preregistrations\CreatePreregistration\CreatePreregistrationCall;
 use Koba\Informat\Directories\Preregistrations\DeletePreregistration\DeletePreregistrationCall;
 use Koba\Informat\Directories\Preregistrations\GetPreregistrationStatus\GetPreregistrationStatusCall;
+use Koba\Informat\Enums\BaseUrl;
 
 class PreregistrationsDirectory
+extends AbstractDirectory
+implements DirectoryInterface
 {
-    public function __construct(protected CallProcessor $callProcessor)
+    public function getBaseUrl(): BaseUrl
     {
+        return BaseUrl::STUDENT;
     }
-
+    
     public function getPreregistrationStatus(
         string $instituteNumber,
         string $preRegistrationId
     ): GetPreregistrationStatusCall {
         return new GetPreregistrationStatusCall(
-            $this->callProcessor,
+            $this,
             $instituteNumber,
             $preRegistrationId,
         );
@@ -30,7 +35,7 @@ class PreregistrationsDirectory
         string $preRegistrationId
     ): DeletePreregistrationCall {
         return new DeletePreregistrationCall(
-            $this->callProcessor,
+            $this,
             $instituteNumber,
             $preRegistrationId
         );
@@ -57,7 +62,7 @@ class PreregistrationsDirectory
         int $registrationStatus,
     ): CreatePreregistrationCall {
         return new CreatePreregistrationCall(
-            $this->callProcessor,
+            $this,
             $instituteNumber,
             $lastName,
             $firstName,

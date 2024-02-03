@@ -3,6 +3,7 @@
 namespace Koba\Informat\Call;
 
 use Koba\Informat\AccessToken\AccessTokenManagerInterface;
+use Koba\Informat\Enums\HttpMethod;
 use Koba\Informat\Exceptions\CallException;
 use Koba\Informat\Exceptions\InternalErrorException;
 use Koba\Informat\Helpers\InstituteNumber;
@@ -13,8 +14,6 @@ use Psr\Http\Message\StreamFactoryInterface;
 
 class CallProcessor
 {
-    protected const BASE_URL = 'https://leerlingenapi.informatsoftware.be/';
-
     public function __construct(
         protected AccessTokenManagerInterface $accessTokenManager,
         protected ClientInterface $httpClient,
@@ -23,22 +22,14 @@ class CallProcessor
     ) {
     }
 
-    protected function buildUrl(string $endpoint): string
-    {
-        return self::BASE_URL . ltrim($endpoint, '/');
-    }
-
     public function buildRequest(
-        string $method,
-        string $endpoint,
+        string $url,
+        HttpMethod $method,
         InstituteNumber $instituteNumber
     ): EncapsulatedRequest {
         return new EncapsulatedRequest(
             $this->requestFactory
-                ->createRequest(
-                    $method,
-                    $this->buildUrl($endpoint)
-                )
+                ->createRequest($method->value, $url)
                 ->withAddedHeader(
                     'Authorization',
                     'BEARER ' . $this->accessTokenManager->getAccessToken()

@@ -2,15 +2,20 @@
 
 namespace Koba\Informat\Directories\Students;
 
-use Koba\Informat\Call\CallProcessor;
+use Koba\Informat\Directories\AbstractDirectory;
+use Koba\Informat\Directories\DirectoryInterface;
 use Koba\Informat\Directories\Students\GetRegistrations\GetRegistrationsCall;
 use Koba\Informat\Directories\Students\GetStudent\GetStudentCall;
 use Koba\Informat\Directories\Students\GetStudents\GetStudentsCall;
+use Koba\Informat\Enums\BaseUrl;
 
 class StudentsDirectory
+extends AbstractDirectory
+implements DirectoryInterface
 {
-    public function __construct(protected CallProcessor $callProcessor)
+    public function getBaseUrl(): BaseUrl
     {
+        return BaseUrl::STUDENT;
     }
 
     public function getStudent(
@@ -19,7 +24,7 @@ class StudentsDirectory
         null|int|string $schoolyear = null
     ): GetStudentCall {
         return new GetStudentCall(
-            $this->callProcessor,
+            $this,
             $instituteNumber,
             $studentId,
             $schoolyear,
@@ -31,7 +36,7 @@ class StudentsDirectory
         null|int|string $schoolyear = null
     ): GetStudentsCall {
         return new GetStudentsCall(
-            $this->callProcessor,
+            $this,
             $instituteNumber,
             $schoolyear,
         );
@@ -42,7 +47,7 @@ class StudentsDirectory
         null|int|string $schoolyear = null
     ): GetRegistrationsCall {
         return new GetRegistrationsCall(
-            $this->callProcessor,
+            $this,
             $instituteNumber,
             $schoolyear
         );

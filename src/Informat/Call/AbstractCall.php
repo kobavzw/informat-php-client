@@ -2,6 +2,7 @@
 
 namespace Koba\Informat\Call;
 
+use Koba\Informat\Directories\DirectoryInterface;
 use Koba\Informat\Enums\HttpMethod;
 use Koba\Informat\Helpers\InstituteNumber;
 use Psr\Http\Message\ResponseInterface;
@@ -9,7 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 abstract class AbstractCall implements CallInterface
 {
     protected InstituteNumber $instituteNumber;
-    protected CallProcessor $callProcessor;
+    protected DirectoryInterface $directory;
 
     abstract protected function getMethod(): HttpMethod;
     abstract protected function getEndpoint(): string;
@@ -22,9 +23,9 @@ abstract class AbstractCall implements CallInterface
         return null;
     }
 
-    protected function setCallProcessor(CallProcessor $callProcessor): void
+    protected function setDirectory(DirectoryInterface $directory): void
     {
-        $this->callProcessor = $callProcessor;
+        $this->directory = $directory;
     }
 
     protected function setInstituteNumber(string $instituteNumber): void
@@ -37,21 +38,16 @@ abstract class AbstractCall implements CallInterface
         return null;
     }
 
-    private function getEndpointWithQueryParams(): string
-    {
-        $endpoint = $this->getEndpoint();
-        if ($this instanceof HasQueryParamsInterface) {
-            $endpoint .= "?{$this->getQueryParamString()}";
-        }
-
-        return $endpoint;
-    }
-
     protected function performRequest(): ResponseInterface
     {
-        $request = $this->callProcessor->buildRequest(
-            $this->getMethod()->value,
-            $this->getEndpointWithQueryParams(),
+        $request = $this->directory->getCallProcessor()->buildRequest(
+            $this->directory->getUrlBuilder()->build(
+                $this->getEndpoint(),
+                $this instanceof HasQueryParamsInterface
+                    ? $this->getQueryParamString()
+                    : null
+            ),
+            $this->getMethod(),
             $this->instituteNumber
         );
 
@@ -63,6 +59,6 @@ abstract class AbstractCall implements CallInterface
             $request->withVersion($this->getApiVersion());
         }
 
-        return $this->callProcessor->send($request);
+        return $this->directory->getCallProcessor()->send($request);
     }
 }
