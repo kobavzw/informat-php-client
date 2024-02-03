@@ -4,6 +4,7 @@ namespace Koba\Informat\Directories\Preregistrations\GetPreregistrationStatus;
 
 use Koba\Informat\Call\AbstractCall;
 use Koba\Informat\Call\CallProcessor;
+use Koba\Informat\Enums\HttpMethod;
 use Koba\Informat\Helpers\JsonMapper;
 
 class GetPreregistrationStatusCall
@@ -18,9 +19,9 @@ extends AbstractCall
         $this->setInstituteNumber($instituteNumber);
     }
 
-    protected function getMethod(): string
+    protected function getMethod(): HttpMethod
     {
-        return 'GET';
+        return HttpMethod::GET;
     }
 
     protected function getEndpoint(): string

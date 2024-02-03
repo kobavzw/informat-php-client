@@ -2,6 +2,7 @@
 
 namespace Koba\Informat\Call;
 
+use Koba\Informat\Enums\HttpMethod;
 use Koba\Informat\Helpers\InstituteNumber;
 use Psr\Http\Message\ResponseInterface;
 
@@ -10,7 +11,7 @@ abstract class AbstractCall implements CallInterface
     protected InstituteNumber $instituteNumber;
     protected CallProcessor $callProcessor;
 
-    abstract protected function getMethod(): string;
+    abstract protected function getMethod(): HttpMethod;
     abstract protected function getEndpoint(): string;
 
     /**
@@ -49,7 +50,7 @@ abstract class AbstractCall implements CallInterface
     protected function performRequest(): ResponseInterface
     {
         $request = $this->callProcessor->buildRequest(
-            $this->getMethod(),
+            $this->getMethod()->value,
             $this->getEndpointWithQueryParams(),
             $this->instituteNumber
         );

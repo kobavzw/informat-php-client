@@ -4,6 +4,7 @@ namespace Koba\Informat\Directories\Preregistrations\DeletePreregistration;
 
 use Koba\Informat\Call\AbstractCall;
 use Koba\Informat\Call\CallProcessor;
+use Koba\Informat\Enums\HttpMethod;
 
 class DeletePreregistrationCall
 extends AbstractCall
@@ -17,9 +18,9 @@ extends AbstractCall
         $this->setInstituteNumber($instituteNumber);
     }
 
-    protected function getMethod(): string
+    protected function getMethod(): HttpMethod
     {
-        return 'DELETE';
+        return HttpMethod::DELETE;
     }
 
     protected function getEndpoint(): string

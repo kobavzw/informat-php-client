@@ -7,6 +7,7 @@ use Koba\Informat\Call\AbstractCall;
 use Koba\Informat\Call\CallProcessor;
 use Koba\Informat\Call\HasQueryParamsInterface;
 use Koba\Informat\Call\HasQueryParamsTrait;
+use Koba\Informat\Enums\HttpMethod;
 use Koba\Informat\Helpers\JsonMapper;
 use Koba\Informat\Helpers\Schoolyear;
 use Koba\Informat\Responses\Students\Student;
@@ -31,9 +32,9 @@ implements HasQueryParamsInterface
         );
     }
 
-    protected function getMethod(): string
+    protected function getMethod(): HttpMethod
     {
-        return 'GET';
+        return HttpMethod::GET;
     }
 
     protected function getEndpoint(): string

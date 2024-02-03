@@ -5,6 +5,7 @@ namespace Koba\Informat\Directories\Preregistrations\CreatePreregistration;
 use DateTime;
 use Koba\Informat\Call\AbstractCall;
 use Koba\Informat\Call\CallProcessor;
+use Koba\Informat\Enums\HttpMethod;
 use Koba\Informat\Exceptions\ValidationException;
 use Koba\Informat\Helpers\JsonMapper;
 use Koba\Informat\Helpers\Schoolyear;
@@ -601,9 +602,9 @@ extends AbstractCall
         ];
     }
 
-    protected function getMethod(): string
+    protected function getMethod(): HttpMethod
     {
-        return 'POST';
+        return HttpMethod::POST;
     }
 
     protected function getEndpoint(): string
