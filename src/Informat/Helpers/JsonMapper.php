@@ -6,6 +6,7 @@ use JsonMapper\JsonMapperFactory;
 use JsonMapper\JsonMapperInterface;
 use Koba\Informat\Exceptions\InternalErrorException;
 use Psr\Http\Message\ResponseInterface;
+use stdClass;
 
 class JsonMapper
 {
@@ -60,16 +61,29 @@ class JsonMapper
      * @template T of object
      * @param ResponseInterface $content
      * @param class-string<T> $targetClass
-     * @return T[];
+     * @return T
+     */
+    public function mapObject(ResponseInterface $content, string $targetClass)
+    {
+        $decoded = json_decode($content->getBody()->getContents());
+        if ($decoded instanceof stdClass) {
+            return $this->mapper->mapToClass($decoded, $targetClass);
+        }
+
+        throw new InternalErrorException('Invalid input provided.');
+    }
+
+    /**
+     * @template T of object
+     * @param ResponseInterface $content
+     * @param class-string<T> $targetClass
+     * @return T[]
      */
     public function mapArray(ResponseInterface $content, string $targetClass)
     {
         $decoded = json_decode($content->getBody()->getContents());
         if (is_array($decoded)) {
-            return $this->mapper->mapToClassArray(
-                $decoded,
-                $targetClass
-            );
+            return $this->mapper->mapToClassArray($decoded, $targetClass);
         }
 
         throw new InternalErrorException('Invalid input provided.');

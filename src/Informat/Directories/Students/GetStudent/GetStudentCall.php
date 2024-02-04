@@ -18,15 +18,17 @@ implements HasQueryParamsInterface
 {
     use HasQueryParamsTrait;
 
-    public function __construct(
+    protected string $studentId;
+
+    public static function make(
         DirectoryInterface $directory,
         string $instituteNumber,
-        protected string $studentId,
+        string $studentId,
         null|int|string $schoolyear,
-    ) {
-        $this->setDirectory($directory);
-        $this->setInstituteNumber($instituteNumber);
-        $this->setQueryParam('schoolYear', new Schoolyear($schoolyear));
+    ): self {
+        return (new self($directory, $instituteNumber))
+            ->setStudentId($studentId)
+            ->setSchoolyear($schoolyear);
     }
 
     protected function getMethod(): HttpMethod
@@ -51,6 +53,26 @@ implements HasQueryParamsInterface
     public function setReferenceDate(DateTime $date): self
     {
         $this->setQueryParam('refdate', $date->format('Y-m-d'));
+        return $this;
+    }
+
+    /**
+     * Limits the output results to a student with the provided studentId.
+     */
+    public function setStudentId(string $studentId): self
+    {
+        $this->studentId = $studentId;
+        return $this;
+    }
+
+    /**
+     * Is only used to determine the actual registration (inschrijvingsId 
+     * property). So this parameter has no limiting effect on 
+     * the output result.
+     */
+    public function setSchoolyear(null|int|string $schoolyear): self
+    {
+        $this->setQueryParam('schoolYear', new Schoolyear($schoolyear));
         return $this;
     }
 

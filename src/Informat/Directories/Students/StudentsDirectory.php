@@ -18,12 +18,17 @@ implements DirectoryInterface
         return BaseUrl::STUDENT;
     }
 
+    /**
+     * Gets a student by it’s studentId. The institute number, school year
+     * and reference date are only used to determine the actual registration 
+     * (inschrijvingsId property).
+     */
     public function getStudent(
         string $instituteNumber,
         string $studentId,
         null|int|string $schoolyear = null
     ): GetStudentCall {
-        return new GetStudentCall(
+        return GetStudentCall::make(
             $this,
             $instituteNumber,
             $studentId,
@@ -31,22 +36,31 @@ implements DirectoryInterface
         );
     }
 
+    /**
+     * Gets all students with a registration for a given institute number, 
+     * school year and reference date falling between registration’s 
+     * begin & end date.
+     */
     public function getStudents(
         string $instituteNumber,
         null|int|string $schoolyear = null
     ): GetStudentsCall {
-        return new GetStudentsCall(
+        return GetStudentsCall::make(
             $this,
             $instituteNumber,
             $schoolyear,
         );
     }
 
+    /**
+     * Gets all the registrations for the combination 
+     * institute number and school year.
+     */
     public function getRegistrations(
         string $instituteNumber,
         null|int|string $schoolyear = null
     ): GetRegistrationsCall {
-        return new GetRegistrationsCall(
+        return GetRegistrationsCall::make(
             $this,
             $instituteNumber,
             $schoolyear

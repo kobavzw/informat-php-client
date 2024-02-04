@@ -18,14 +18,13 @@ implements HasQueryParamsInterface
 {
     use HasQueryParamsTrait;
 
-    public function __construct(
+    public static function make(
         DirectoryInterface $directory,
         string $instituteNumber,
         int|string|null $schoolyear,
-    ) {
-        $this->setDirectory($directory);
-        $this->setInstituteNumber($instituteNumber);
-        $this->setQueryParam('schoolYear', new Schoolyear($schoolyear));
+    ): self {
+        return (new self($directory, $instituteNumber))
+            ->setSchoolyear($schoolyear);
     }
 
     protected function getMethod(): HttpMethod
@@ -62,6 +61,16 @@ implements HasQueryParamsInterface
     public function setChangedSince(DateTime $date): self
     {
         $this->setQueryParam('changedSince', $date->format('c'));
+        return $this;
+    }
+
+    /**
+     * Limits the output results to students which have a registration within
+     * the given schoolyear.
+     */
+    public function setSchoolyear(int|string|null $schoolyear): self
+    {
+        $this->setQueryParam('schoolYear', new Schoolyear($schoolyear));
         return $this;
     }
 

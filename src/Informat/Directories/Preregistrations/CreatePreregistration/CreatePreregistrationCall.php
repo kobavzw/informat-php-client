@@ -51,7 +51,7 @@ extends AbstractCall
     /** @var Relation[] $relations */
     protected array $relations = [];
 
-    public function __construct(
+    public static function make(
         DirectoryInterface $directory,
         string $instituteNumber,
         string $lastName,
@@ -71,14 +71,13 @@ extends AbstractCall
         ?DateTime $preRegistrationDate,
         DateTime $startDate,
         int $registrationStatus,
-    ) {
-        $this->setDirectory($directory);
+    ): self {
+        $call = new self($directory, $instituteNumber);
 
         /** @var string[] $errors */
         $errors = [];
 
         foreach ([
-            'setInstituteNumber' => $instituteNumber,
             'setLastName' => $lastName,
             'setFirstName' => $firstName,
             'setDateOfBirth' => $dateOfBirth,
@@ -98,7 +97,7 @@ extends AbstractCall
             'setRegistrationStatus' => $registrationStatus
         ] as $fn => $value) {
             try {
-                call_user_func([$this, $fn], $value);
+                call_user_func([$call, $fn], $value);
             } catch (ValidationException $e) {
                 $errors = [...$errors, ...$e->getErrors()];
             }
@@ -107,6 +106,8 @@ extends AbstractCall
         if (count($errors) > 0) {
             throw new ValidationException($errors);
         }
+
+        return $call;
     }
 
     /**
@@ -612,6 +613,9 @@ extends AbstractCall
         return '1/preregistrations/save';
     }
 
+    /**
+     * Perform the API call. 
+     */
     public function send(): CreatePreregistrationResponse
     {
         return (new JsonMapper)->mapProperty(

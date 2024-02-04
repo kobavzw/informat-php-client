@@ -19,28 +19,50 @@ implements DirectoryInterface
         return BaseUrl::STUDENT;
     }
     
+    /**
+     * Gets the status of a pre-registration/registration 
+     * by it's preRegistrationId.
+     * 
+     * @param string $preRegistrationId
+     * The unique identifier of the pre-registration/registration. (GUID)
+     */
     public function getPreregistrationStatus(
         string $instituteNumber,
         string $preRegistrationId
     ): GetPreregistrationStatusCall {
-        return new GetPreregistrationStatusCall(
+        return GetPreregistrationStatusCall::make(
             $this,
             $instituteNumber,
             $preRegistrationId,
         );
     }
 
+    /**
+     * Delete your online Pre-registration data.
+     * @param string $preRegistrationId
+     * The unique identifier of the pre-registration. (GUID)
+     */
     public function deletePreregistration(
         string $instituteNumber,
         string $preRegistrationId
     ): DeletePreregistrationCall {
-        return new DeletePreregistrationCall(
+        return DeletePreregistrationCall::make(
             $this,
             $instituteNumber,
             $preRegistrationId
         );
     }
 
+    /**
+     * This call can be used to:
+     * - Add your new online reservation into Informat as a Pre-registration;
+     * - Update an existing pre-registration based on the preRegistrationId;
+     * - Add an “update personal details”-registration by using “000000” 
+     *   as admgrpId (means no admgrp), used when the original pre-registration
+     *   is already accepted and can no longer be changed;
+     * - Update an existing “update personal details”-registration based 
+     *   on the preRegistrationId provided during addition.
+     */
     public function createPreregistration(
         string $instituteNumber,
         string $lastName,
@@ -61,7 +83,7 @@ implements DirectoryInterface
         DateTime $startDate,
         int $registrationStatus,
     ): CreatePreregistrationCall {
-        return new CreatePreregistrationCall(
+        return CreatePreregistrationCall::make(
             $this,
             $instituteNumber,
             $lastName,

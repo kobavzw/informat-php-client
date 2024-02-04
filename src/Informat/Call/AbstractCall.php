@@ -10,10 +10,16 @@ use Psr\Http\Message\ResponseInterface;
 abstract class AbstractCall implements CallInterface
 {
     protected InstituteNumber $instituteNumber;
-    protected DirectoryInterface $directory;
 
     abstract protected function getMethod(): HttpMethod;
     abstract protected function getEndpoint(): string;
+
+    protected function __construct(
+        protected DirectoryInterface $directory,
+        string $instituteNumber,
+    ) {
+        $this->instituteNumber = new InstituteNumber($instituteNumber);
+    }
 
     /**
      * @return null|string|array<mixed>
@@ -21,16 +27,6 @@ abstract class AbstractCall implements CallInterface
     protected function getBody(): null|string|array
     {
         return null;
-    }
-
-    protected function setDirectory(DirectoryInterface $directory): void
-    {
-        $this->directory = $directory;
-    }
-
-    protected function setInstituteNumber(string $instituteNumber): void
-    {
-        $this->instituteNumber = new InstituteNumber($instituteNumber);
     }
 
     protected function getApiVersion(): ?string

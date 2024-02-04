@@ -10,13 +10,15 @@ use Koba\Informat\Helpers\JsonMapper;
 class GetPreregistrationStatusCall
 extends AbstractCall
 {
-    public function __construct(
+    protected string $preRegistrationId;
+
+    public static function make(
         DirectoryInterface $directory,
         string $instituteNumber,
-        protected string $preRegistrationId
-    ) {
-        $this->setDirectory($directory);
-        $this->setInstituteNumber($instituteNumber);
+        string $preRegistrationId
+    ): self {
+        return (new self($directory, $instituteNumber))
+            ->setPreRegistrationId($preRegistrationId);
     }
 
     protected function getMethod(): HttpMethod
@@ -29,7 +31,18 @@ extends AbstractCall
         return "1/preregistrations/{$this->preRegistrationId}/status";
     }
 
-    /** Perform the API call */
+    /**
+     * The unique identifier of the pre-registration.
+     */
+    public function setPreRegistrationId(string $preRegistrationId): self
+    {
+        $this->preRegistrationId = $preRegistrationId;
+        return $this;
+    }
+
+    /** 
+     * Perform the API call 
+     */
     public function send(): GetPreregistrationStatusResponse
     {
         return (new JsonMapper)->mapProperty(

@@ -1,6 +1,6 @@
 <?php
 
-namespace Koba\Informat\Directories\Personnel\GetEmployees;
+namespace Koba\Informat\Directories\Personnel\GetEmployee;
 
 use Koba\Informat\Call\AbstractCall;
 use Koba\Informat\Call\HasQueryParamsInterface;
@@ -11,22 +11,22 @@ use Koba\Informat\Helpers\JsonMapper;
 use Koba\Informat\Helpers\Schoolyear;
 use Koba\Informat\Responses\Personnel\Employee;
 
-/**
- * Gets all the employees for the combination 
- * institute number, school year and structure.
- */
-class GetEmployeesCall
+class GetEmployeeCall
 extends AbstractCall
 implements HasQueryParamsInterface
 {
     use HasQueryParamsTrait;
 
+    protected string $personId;
+
     public static function make(
         DirectoryInterface $directory,
         string $instituteNumber,
+        string $personId,
         null|int|string $schoolyear,
     ): self {
         return (new self($directory, $instituteNumber))
+            ->setPersonId($personId)
             ->setSchoolyear($schoolyear);
     }
 
@@ -37,21 +37,21 @@ implements HasQueryParamsInterface
 
     protected function getEndpoint(): string
     {
-        return 'employees';
-    }
-
-    protected function getApiVersion(): ?string
-    {
-        return '2';
+        return "employees/{$this->personId}";
     }
 
     /**
-     * For current & future school years: It limits the output results
-     * to employees with an assignment within the given schoolyear 
-     * (and instituteNo) or which are marked as active for your instituteNo.
-     * For passed school years: It limits the output results to employees 
-     * with an assignment within the given schoolyear (and instituteNo). 
-     * Also used to determine the instituteNo’s for the properties 
+     * Limits the output results to an employee with the provided personId.
+     * The ID should contain a GUID.
+     */
+    public function setPersonId(string $personId): self
+    {
+        $this->personId = $personId;
+        return $this;
+    }
+
+    /**
+     * Only used to determine the instituteNo’s for the properties 
      * “EersteDienstScholengroep” and “EersteDienstScholengemeenschap”.
      */
     public function setSchoolyear(null|int|string $schoolyear): self
@@ -61,12 +61,10 @@ implements HasQueryParamsInterface
     }
 
     /**
-     * This is an actually an additional restriction on the school year filter.
-     * Also used to determine the properties “HoofdAmbt”, “EersteDienstSchool”
-     * and “IsActive” in a more detailed way, by means of the combination
-     * instituteNo & structure.
-     * 
-     * Note: Only structures “311” & “312” are taken into account. 
+     * Only used to determine the properties “HoofdAmbt”, “EersteDienstSchool”
+     * and “IsActive” in a more detailed way, by means of the combination 
+     * instituteNo & structure. Note: Only structures “311” & “312” are taken 
+     * into account, the other structures are ignored.
      */
     public function setStructure(string $structure): self
     {
@@ -76,11 +74,10 @@ implements HasQueryParamsInterface
 
     /**
      * Perform the API call.
-     * @return Employee[]
      */
-    public function send(): array
+    public function send(): Employee
     {
-        return (new JsonMapper)->mapArray(
+        return (new JsonMapper)->mapObject(
             $this->performRequest(),
             Employee::class
         );
