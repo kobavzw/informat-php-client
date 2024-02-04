@@ -8,6 +8,7 @@ use Koba\Informat\AccessToken\AccessTokenFetcher;
 use Koba\Informat\AccessToken\AccessTokenManager;
 use Koba\Informat\AccessToken\AccessTokenManagerInterface;
 use Koba\Informat\Call\CallProcessor;
+use Koba\Informat\Directories\Personnel\PersonnelDirectory;
 use Koba\Informat\Directories\Preregistrations\PreregistrationsDirectory;
 use Koba\Informat\Directories\Students\StudentsDirectory;
 use Koba\Informat\Scopes\ScopeStrategyInterface;
@@ -57,5 +58,10 @@ class Informat
     public function preregistrations(): PreregistrationsDirectory
     {
         return new PreregistrationsDirectory($this->callProcessor);
+    }
+
+    public function personnel(): PersonnelDirectory
+    {
+        return new PersonnelDirectory($this->callProcessor);
     }
 }

@@ -6,4 +6,5 @@ enum Scope: string
 {
     case STUDENTS = 'api_informat_sas_leerlingen.leerlingen';
     case PREREGISTRATIONS = "api_informat_sas_leerlingen.voorinschrijvingen";
+    case PERSONNEL = 'api_informat_sas_personeel.personeel';
 }

@@ -55,4 +55,23 @@ class JsonMapper
 
         throw new InternalErrorException('Invalid JSON property requested.');
     }
+
+    /**
+     * @template T of object
+     * @param ResponseInterface $content
+     * @param class-string<T> $targetClass
+     * @return T[];
+     */
+    public function mapArray(ResponseInterface $content, string $targetClass)
+    {
+        $decoded = json_decode($content->getBody()->getContents());
+        if (is_array($decoded)) {
+            return $this->mapper->mapToClassArray(
+                $decoded,
+                $targetClass
+            );
+        }
+
+        throw new InternalErrorException('Invalid input provided.');
+    }
 }
