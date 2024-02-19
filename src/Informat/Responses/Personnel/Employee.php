@@ -127,6 +127,12 @@ class Employee
     public array $comnrs;
 
     /**
+     * List of email addresses
+     * @var EmailAddress[]
+     */
+    public array $emailadressen;
+
+    /**
      * List of children.
      * @var Child[]
      */
