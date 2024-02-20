@@ -39,7 +39,10 @@ class AccessTokenFetcher
 
         $response = $this->httpClient->sendRequest($request);
         if ($response->getStatusCode() !== 200) {
-            throw new AccessTokenException('Fetching access token failed.');
+            throw new AccessTokenException(
+                'Fetching access token failed.', 
+                $this->scopeStrategy->getScopes()
+            );
         }
 
         $decoded = json_decode(
@@ -55,6 +58,9 @@ class AccessTokenFetcher
             return new AccessToken($decoded['access_token'], $decoded['expires_in']);
         }
 
-        throw new AccessTokenException('Invalid access token');
+        throw new AccessTokenException(
+            'Invalid access token', 
+            $this->scopeStrategy->getScopes()
+        );
     }
 }

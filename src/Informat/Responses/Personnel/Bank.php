@@ -11,5 +11,5 @@ class Bank
      * Employee’s Bank Identification Code. 
      * Format: 8 to 11 characters if provided.
      */
-    public string $bic;
+    public ?string $bic;
 }

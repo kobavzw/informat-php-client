@@ -26,7 +26,7 @@ class Address
     public string $postcode;
 
     /** Submunicipality. */
-    public string $gemeente;
+    public ?string $gemeente;
 
     /** Official country code. */
     public string $landCode;

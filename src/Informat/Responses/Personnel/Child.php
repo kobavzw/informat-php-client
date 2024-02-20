@@ -20,7 +20,7 @@ class Child
     public Sex $geslacht;
 
     /** Child’s date of birth. */
-    public string $geboortedatum;
+    public ?DateTime $geboortedatum;
 
     /** Indicates whether the child is deceased. */
     public bool $isOverleden;

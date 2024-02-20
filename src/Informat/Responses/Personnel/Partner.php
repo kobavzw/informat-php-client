@@ -14,7 +14,7 @@ class Partner
     public string $naam;
 
     /** Partner’s first name. */
-    public string $voornaam;
+    public ?string $voornaam;
 
     /** Partner’s date of birth. */
     public ?DateTime $geboortedatum;

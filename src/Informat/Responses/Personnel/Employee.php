@@ -24,13 +24,13 @@ class Employee
     public string $voornaam;
 
     /** Employee’s additional names. */
-    public string $bijkomendeVoornamen;
+    public ?string $bijkomendeVoornamen;
 
     /**
      * Employee’s stamnummer.
      * Format: 11 characters (digits)
      */
-    public string $stamnr;
+    public ?string $stamnr;
 
     /** Employee’s sortable name. */
     public string $sortName;
@@ -42,25 +42,25 @@ class Employee
     public Sex $geslacht;
 
     /** Employee’s initials. */
-    public string $initialen;
+    public ?string $initialen;
 
     /** Employee’s date of birth. */
     public DateTime $geboortedatum;
 
     /** Employee’s place of birth. */
-    public string $geboorteplaats;
+    public ?string $geboorteplaats;
 
     /** Employee’s official country of birth code. */
     public string $geboortelandCode;
 
     /** Employee’s official nationality code. */
-    public string $nationaliteitCode;
+    public ?string $nationaliteitCode;
 
     /** 
      * Employee’s national registration number for Belgium residents. 
      * Format: ”yymmddxxxxx” if provided
      */
-    public string $rijksregisternr;
+    public ?string $rijksregisternr;
 
     /** 
      * Employee’s national registration number for a foreign person.
@@ -109,7 +109,7 @@ class Employee
     public ?DateTime $datumOverleden;
 
     /** Employee’s civil status. */
-    public BurgerlijkeStand $burgStand;
+    public ?BurgerlijkeStand $burgStand;
 
     /** Single object representing employee’s partner. */
     public ?Partner $partner;
