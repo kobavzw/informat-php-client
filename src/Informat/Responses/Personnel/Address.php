@@ -17,7 +17,7 @@ class Address
     public string $straat;
 
     /** House number & Alpha number. */
-    public string $nummer;
+    public ?string $nummer;
 
     /** Bus number. */
     public ?string $bus;

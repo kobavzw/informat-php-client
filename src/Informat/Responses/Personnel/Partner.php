@@ -29,5 +29,5 @@ class Partner
     public ?DateTime $datumOverleden;
 
     /** Partner’s Income. */
-    public Income $inkomen;
+    public ?Income $inkomen;
 }
