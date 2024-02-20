@@ -6,13 +6,11 @@ jobs:
   phpstan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: php-actions/composer@v6
 
       - name: PHPStan Static Analysis
         uses: php-actions/phpstan@v3
         with:
           path: src/
-          version: composer
-          configuration: phpstan.neon
           php_version: 8.3
