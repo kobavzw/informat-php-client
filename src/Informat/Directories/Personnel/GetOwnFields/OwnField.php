@@ -10,7 +10,7 @@ class OwnField
 
     public string $naam;
 
-    public string $waarde;
+    public mixed $waarde;
 
     public string $dataType;
 
