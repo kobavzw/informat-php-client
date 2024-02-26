@@ -6,6 +6,7 @@ use Koba\Informat\Directories\AbstractDirectory;
 use Koba\Informat\Directories\DirectoryInterface;
 use Koba\Informat\Directories\Personnel\GetEmployee\GetEmployeeCall;
 use Koba\Informat\Directories\Personnel\GetEmployees\GetEmployeesCall;
+use Koba\Informat\Directories\Personnel\GetOwnFields\GetOwnFieldsCall;
 use Koba\Informat\Enums\BaseUrl;
 
 class PersonnelDirectory
@@ -64,6 +65,17 @@ implements DirectoryInterface
             $instituteNumber,
             $personId,
             $schoolyear,
+        );
+    }
+
+    public function getOwnFields(
+        string $instituteNumber,
+        null|int|string $schoolyear = null
+    ): GetOwnFieldsCall {
+        return GetOwnFieldsCall::make(
+            $this,
+            $instituteNumber,
+            $schoolyear
         );
     }
 }
