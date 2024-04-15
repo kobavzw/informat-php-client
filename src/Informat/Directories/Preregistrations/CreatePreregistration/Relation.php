@@ -73,7 +73,7 @@ class Relation
     public function setAddress(
         string $streetName,
         string $houseNo,
-        ?string $houseBusNo = null,
+        ?string $houseBusNo,
         string $postalCode,
         string $city,
         string $countryCode,
