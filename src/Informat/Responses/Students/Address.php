@@ -11,7 +11,7 @@ class Address
     public string $adresId;
 
     /** Addressable title. */
-    public string $aanspreekTitel;
+    public ?string $aanspreekTitel;
 
     /** Addressable name. */
     public string $aanspreekNaam;
