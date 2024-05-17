@@ -4,6 +4,8 @@ namespace Koba\Informat\Directories\Personnel;
 
 use Koba\Informat\Directories\AbstractDirectory;
 use Koba\Informat\Directories\DirectoryInterface;
+use Koba\Informat\Directories\Personnel\GetDiplomas\GetDiplomasCall;
+use Koba\Informat\Directories\Personnel\GetDiplomasForEmployee\GetDiplomasForEmployeeCall;
 use Koba\Informat\Directories\Personnel\GetEmployee\GetEmployeeCall;
 use Koba\Informat\Directories\Personnel\GetEmployees\GetEmployeesCall;
 use Koba\Informat\Directories\Personnel\GetInterruptions\GetInterruptionsCall;
@@ -110,6 +112,34 @@ implements DirectoryInterface
             $instituteNumber,
             $personId,
             $schoolyear,
+        );
+    }
+
+    /**
+     * Gets all the diplomas for the combination institute number, school year
+     * and structure.
+     */
+    public function getDiplomas(
+        string $instituteNumber,
+        null|int|string $schoolyear = null
+    ): GetDiplomasCall {
+        return GetDiplomasCall::make($this, $instituteNumber, $schoolyear);
+    }
+
+    /**
+     * Gets all the diplomas for the combination institute number, school year
+     * and structure.
+     */
+    public function getDiplomasForEmployee(
+        string $instituteNumber,
+        string $personId,
+        null|int|string $schoolyear = null
+    ): GetDiplomasForEmployeeCall {
+        return GetDiplomasForEmployeeCall::make(
+            $this,
+            $instituteNumber,
+            $personId,
+            $schoolyear
         );
     }
 }
