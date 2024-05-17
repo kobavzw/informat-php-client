@@ -6,6 +6,8 @@ use Koba\Informat\Directories\AbstractDirectory;
 use Koba\Informat\Directories\DirectoryInterface;
 use Koba\Informat\Directories\Personnel\GetEmployee\GetEmployeeCall;
 use Koba\Informat\Directories\Personnel\GetEmployees\GetEmployeesCall;
+use Koba\Informat\Directories\Personnel\GetInterruptions\GetInterruptionsCall;
+use Koba\Informat\Directories\Personnel\GetInterruptionsForEmployee\GetInterruptionsForEmployeeCall;
 use Koba\Informat\Directories\Personnel\GetOwnFields\GetOwnFieldsCall;
 use Koba\Informat\Enums\BaseUrl;
 
@@ -76,6 +78,38 @@ implements DirectoryInterface
             $this,
             $instituteNumber,
             $schoolyear
+        );
+    }
+
+    /** 
+     * Gets all the interruptions for the combination institute number, 
+     * school year and structure.   
+     */
+    public function getInterruptions(
+        string $instituteNumber,
+        null|int|string $schoolyear = null
+    ): GetInterruptionsCall {
+        return GetInterruptionsCall::make(
+            $this,
+            $instituteNumber,
+            $schoolyear,
+        );
+    }
+
+    /**
+     * Gets an employee’s interruptions by personId and for the combination 
+     * institute number, school year and structure.
+     */
+    public function getInterruptionsForEmployee(
+        string $instituteNumber,
+        string $personId,
+        null|int|string $schoolyear = null
+    ): GetInterruptionsForEmployeeCall {
+        return GetInterruptionsForEmployeeCall::make(
+            $this,
+            $instituteNumber,
+            $personId,
+            $schoolyear,
         );
     }
 }
