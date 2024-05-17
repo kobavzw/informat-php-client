@@ -6,6 +6,7 @@ use Koba\Informat\AccessToken\AccessTokenManagerInterface;
 use Koba\Informat\Enums\HttpMethod;
 use Koba\Informat\Exceptions\CallException;
 use Koba\Informat\Exceptions\InternalErrorException;
+use Koba\Informat\Exceptions\NotFoundException;
 use Koba\Informat\Helpers\InstituteNumber;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -46,6 +47,8 @@ class CallProcessor
 
         if ($response->getStatusCode() === 200) {
             return $response;
+        } else if ($response->getStatusCode() === 404) {
+            throw new NotFoundException;
         } else {
             $decoded = json_decode($response->getBody()->getContents(), true);
             if (
