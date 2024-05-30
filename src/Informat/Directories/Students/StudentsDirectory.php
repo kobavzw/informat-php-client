@@ -4,6 +4,7 @@ namespace Koba\Informat\Directories\Students;
 
 use Koba\Informat\Directories\AbstractDirectory;
 use Koba\Informat\Directories\DirectoryInterface;
+use Koba\Informat\Directories\Students\GetPhoto\GetPhotoCall;
 use Koba\Informat\Directories\Students\GetRegistrations\GetRegistrationsCall;
 use Koba\Informat\Directories\Students\GetStudent\GetStudentCall;
 use Koba\Informat\Directories\Students\GetStudents\GetStudentsCall;
@@ -64,6 +65,20 @@ implements DirectoryInterface
             $this,
             $instituteNumber,
             $schoolyear
+        );
+    }
+
+    /** 
+     * Gets a student’s photo by studentId.
+     */
+    public function getPhoto(
+        string $instituteNumber,
+        string $studentId,
+    ): GetPhotoCall {
+        return GetPhotoCall::make(
+            $this,
+            $instituteNumber,
+            $studentId,
         );
     }
 }
