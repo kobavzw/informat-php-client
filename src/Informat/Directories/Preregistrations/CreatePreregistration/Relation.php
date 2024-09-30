@@ -30,6 +30,7 @@ class Relation
     /**
      * Type of relationship.
      * 
+     * 0 = leerling
      * 13 = vader
      * 14 = moeder
      * 5 = plusvader
@@ -37,10 +38,12 @@ class Relation
      * 2 = voogd
      * 9 = grootvader
      * 10 = grootmoeder
+     * 7 = pleegvader
+     * 8 = pleegmoeder
      */
     public function setType(int $type): self
     {
-        $validTypes = [13, 14, 5, 6, 2, 9, 10];
+        $validTypes = [0, 13, 14, 5, 6, 2, 9, 10, 7, 8];
         if (false === in_array($type, $validTypes, true)) {
             throw new ValidationException('Ongeldig relatietype.');
         }
