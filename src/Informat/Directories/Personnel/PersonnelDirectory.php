@@ -6,7 +6,9 @@ use DateTime;
 use Koba\Informat\Directories\AbstractDirectory;
 use Koba\Informat\Directories\DirectoryInterface;
 use Koba\Informat\Directories\Personnel\CreateInterruption\CreateInterruptionCall;
+use Koba\Informat\Directories\Personnel\CreateInterruptionAttachment\CreateInterruptionAttachmentCall;
 use Koba\Informat\Directories\Personnel\DeleteInterruption\DeleteInterruptionCall;
+use Koba\Informat\Directories\Personnel\DeleteInterruptionAttachment\DeleteInterruptionAttachmentCall;
 use Koba\Informat\Directories\Personnel\GetDiplomas\GetDiplomasCall;
 use Koba\Informat\Directories\Personnel\GetDiplomasForEmployee\GetDiplomasForEmployeeCall;
 use Koba\Informat\Directories\Personnel\GetEmployee\GetEmployeeCall;
@@ -16,6 +18,7 @@ use Koba\Informat\Directories\Personnel\GetInterruptionsForEmployee\GetInterrupt
 use Koba\Informat\Directories\Personnel\GetOwnFields\GetOwnFieldsCall;
 use Koba\Informat\Enums\BaseUrl;
 use Koba\Informat\Enums\InterruptionCode;
+use Koba\Informat\Helpers\File;
 
 class PersonnelDirectory
 extends AbstractDirectory
@@ -190,6 +193,47 @@ implements DirectoryInterface
             $instituteNumber,
             $personId,
             $schoolyear
+        );
+    }
+
+    /**
+     * This call can be used to:
+     * - Add a new attachment into Informat linked to an interruption 
+     *   (interruptionId);
+     * - Update an existing interruption-attachment based on the given
+     *   attachmentId. An attachment can be linked to multiple interruptions of 
+     *   the same employee.
+     */
+    public function createInterruptionAttachment(
+        string $instituteNumber,
+        string $interruptionId,
+        string $attachmentId,
+        File $file,
+    ): CreateInterruptionAttachmentCall {
+        return CreateInterruptionAttachmentCall::make(
+            $this,
+            $instituteNumber,
+            $interruptionId,
+            $attachmentId,
+            $file
+        );
+    }
+
+    /**
+     * Remove the link between an interruption and an attachment. If no other
+     * interruption is linked to this attachment then the attachment itself 
+     * will also be removed.
+     */
+    public function deleteInterruptionAttachment(
+        string $instituteNumber,
+        string $interruptionId,
+        string $attachmentId,
+    ): DeleteInterruptionAttachmentCall {
+        return DeleteInterruptionAttachmentCall::make(
+            $this,
+            $instituteNumber,
+            $interruptionId,
+            $attachmentId
         );
     }
 }
