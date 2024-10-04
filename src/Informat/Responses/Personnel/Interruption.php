@@ -3,6 +3,7 @@
 namespace Koba\Informat\Responses\Personnel;
 
 use DateTime;
+use Koba\Informat\Enums\InterruptionCode;
 
 class Interruption
 {
@@ -16,7 +17,7 @@ class Interruption
 
     public DateTime $einddatum;
 
-    public string $code;
+    public InterruptionCode $code;
 
     public string $omschrijving;
 

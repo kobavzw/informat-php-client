@@ -2,8 +2,11 @@
 
 namespace Koba\Informat\Directories\Personnel;
 
+use DateTime;
 use Koba\Informat\Directories\AbstractDirectory;
 use Koba\Informat\Directories\DirectoryInterface;
+use Koba\Informat\Directories\Personnel\CreateInterruption\CreateInterruptionCall;
+use Koba\Informat\Directories\Personnel\DeleteInterruption\DeleteInterruptionCall;
 use Koba\Informat\Directories\Personnel\GetDiplomas\GetDiplomasCall;
 use Koba\Informat\Directories\Personnel\GetDiplomasForEmployee\GetDiplomasForEmployeeCall;
 use Koba\Informat\Directories\Personnel\GetEmployee\GetEmployeeCall;
@@ -12,6 +15,7 @@ use Koba\Informat\Directories\Personnel\GetInterruptions\GetInterruptionsCall;
 use Koba\Informat\Directories\Personnel\GetInterruptionsForEmployee\GetInterruptionsForEmployeeCall;
 use Koba\Informat\Directories\Personnel\GetOwnFields\GetOwnFieldsCall;
 use Koba\Informat\Enums\BaseUrl;
+use Koba\Informat\Enums\InterruptionCode;
 
 class PersonnelDirectory
 extends AbstractDirectory
@@ -112,6 +116,52 @@ implements DirectoryInterface
             $instituteNumber,
             $personId,
             $schoolyear,
+        );
+    }
+
+    /**
+     * This call can be used to:
+     * - Add a new interruption into Informat for an employee (personId);
+     * - Update an existing interruption based on the given interruptionId.
+     */
+    public function createInterruption(
+        string $instituteNumber,
+        string $personId,
+        string $interruptionId,
+        null|int|string $schoolyear,
+        string $hoofdstructuur,
+        string|InterruptionCode $code,
+        string|DateTime $begindatum,
+        string|DateTime $einddatum,
+        string $afzender
+    ): CreateInterruptionCall {
+        return CreateInterruptionCall::make(
+            $this,
+            $instituteNumber,
+            $personId,
+            $interruptionId,
+            $schoolyear,
+            $hoofdstructuur,
+            $code,
+            $begindatum,
+            $einddatum,
+            $afzender
+        );
+    }
+
+    /**
+     * Remove the interruption based on the given interruptionId. Furthermore,
+     * all attachments that are only attached to this interruptionId will also
+     * be deleted.
+     */
+    public function deleteInterruption(
+        string $instituteNumber,
+        string $interruptionId
+    ): DeleteInterruptionCall {
+        return DeleteInterruptionCall::make(
+            $this,
+            $instituteNumber,
+            $interruptionId
         );
     }
 
