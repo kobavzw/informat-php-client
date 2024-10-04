@@ -20,8 +20,7 @@ class CallProcessor
         protected ClientInterface $httpClient,
         protected RequestFactoryInterface $requestFactory,
         protected StreamFactoryInterface $streamFactory,
-    ) {
-    }
+    ) {}
 
     public function buildRequest(
         string $url,
@@ -60,13 +59,16 @@ class CallProcessor
                 throw new CallException(
                     $decoded['message'],
                     array_map(
-                        fn (array $err) => $err['message'],
+                        fn(array $err) => $err['message'],
                         $decoded['errors']
                     )
                 );
             }
 
-            throw new InternalErrorException($response->getBody()->getContents());
+            throw new InternalErrorException(
+                $response->getBody()->getContents(),
+                $response->getStatusCode(),
+            );
         }
     }
 }
