@@ -4,14 +4,17 @@ namespace Koba\Informat\Call;
 
 use Koba\Informat\AccessToken\AccessTokenManagerInterface;
 use Koba\Informat\Enums\HttpMethod;
+use Koba\Informat\Enums\MethodNotAllowedCode;
 use Koba\Informat\Exceptions\CallException;
 use Koba\Informat\Exceptions\InternalErrorException;
+use Koba\Informat\Exceptions\MethodNotAllowedException;
 use Koba\Informat\Exceptions\NotFoundException;
 use Koba\Informat\Helpers\InstituteNumber;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamFactoryInterface;
+use Throwable;
 
 class CallProcessor
 {
@@ -40,35 +43,99 @@ class CallProcessor
         );
     }
 
+    /**
+     * Sends the request.
+     * 
+     * @throws NotFoundException 
+     * @throws MethodNotAllowedException 
+     * @throws CallException 
+     * @throws InternalErrorException 
+     */
     public function send(EncapsulatedRequest $request): ResponseInterface
     {
         $response = $this->httpClient->sendRequest($request->getRequest());
 
-        if ($response->getStatusCode() === 200) {
-            return $response;
-        } else if ($response->getStatusCode() === 404) {
-            throw new NotFoundException;
-        } else {
-            $decoded = json_decode($response->getBody()->getContents(), true);
-            if (
-                is_array($decoded)
-                && array_key_exists('message', $decoded)
-                && array_key_exists('errors', $decoded)
-                && is_array($decoded['errors'])
-            ) {
-                throw new CallException(
-                    $decoded['message'],
-                    array_map(
-                        fn(array $err) => $err['message'],
-                        $decoded['errors']
-                    )
-                );
-            }
+        switch ($response->getStatusCode()) {
+            case 200:
+                return $response;
+            case 404:
+                throw new NotFoundException;
+            case 405:
+                $this->handleMethodNotAllowed($response);
+            default:
+                throw $this->getGenericError($response);
+        }
+    }
 
-            throw new InternalErrorException(
-                $response->getBody()->getContents(),
-                $response->getStatusCode(),
+    /**
+     * If a method not allowed response is return, this function will try
+     * to generate a specific exception for it and throw it. If this doesn't
+     * throw, generic error handling should be used.
+     * 
+     * @throws MethodNotAllowedException
+     */
+    protected function handleMethodNotAllowed(
+        ResponseInterface $response
+    ): void {
+        $exception = null;
+        $body = json_decode($response->getBody()->getContents(), true);
+
+        if (
+            is_array($body)
+            && array_key_exists('errors', $body)
+            && is_array($body['errors'])
+        ) {
+            foreach ($body['errors'] as $error) {
+                if (
+                    is_array($error)
+                    && array_key_exists('Code', $error)
+                    && array_key_exists('Message', $error)
+                ) {
+                    $code = MethodNotAllowedCode::tryFrom($error['Code']);
+                    if ($code !== null) {
+                        $exception = MethodNotAllowedException::make(
+                            $code,
+                            $error['Message'],
+                            $exception,
+                        );
+                    }
+                }
+            }
+        }
+
+        if ($exception !== null) {
+            throw $exception;
+        }
+    }
+
+    /**
+     * Returns a generic error.
+     * 
+     * @throws CallException
+     * @throws InternalErrorException
+     */
+    protected function getGenericError(ResponseInterface $response): Throwable
+    {
+        $body = json_decode($response->getBody()->getContents(), true);
+
+        if (
+            is_array($body)
+            && array_key_exists('message', $body)
+            && array_key_exists('errors', $body)
+            && is_array($body['errors'])
+        ) {
+            return new CallException(
+                $body['message'],
+                array_map(
+                    fn(array $err) => $err['message'],
+                    $body['errors']
+                )
             );
         }
+
+        return new InternalErrorException(
+            $response->getBody()->getContents(),
+            $response->getStatusCode(),
+        );
     }
 }
