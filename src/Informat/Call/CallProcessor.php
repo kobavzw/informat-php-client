@@ -3,8 +3,10 @@
 namespace Koba\Informat\Call;
 
 use Koba\Informat\AccessToken\AccessTokenManagerInterface;
+use Koba\Informat\Enums\BadRequestCode;
 use Koba\Informat\Enums\HttpMethod;
 use Koba\Informat\Enums\MethodNotAllowedCode;
+use Koba\Informat\Exceptions\BadRequestException;
 use Koba\Informat\Exceptions\CallException;
 use Koba\Informat\Exceptions\InternalErrorException;
 use Koba\Informat\Exceptions\MethodNotAllowedException;
@@ -58,6 +60,8 @@ class CallProcessor
         switch ($response->getStatusCode()) {
             case 200:
                 return $response;
+            case 400:
+                $this->handleBadRequest($response);
             case 404:
                 throw new NotFoundException;
             case 405:
@@ -94,6 +98,47 @@ class CallProcessor
                     $code = MethodNotAllowedCode::tryFrom($error['Code']);
                     if ($code !== null) {
                         $exception = MethodNotAllowedException::make(
+                            $code,
+                            $error['Message'],
+                            $exception,
+                        );
+                    }
+                }
+            }
+        }
+
+        if ($exception !== null) {
+            throw $exception;
+        }
+    }
+
+    /**
+     * If a method not allowed response is return, this function will try
+     * to generate a specific exception for it and throw it. If this doesn't
+     * throw, generic error handling should be used.
+     * 
+     * @throws BadRequestException
+     */
+    protected function handleBadRequest(
+        ResponseInterface $response
+    ): void {
+        $exception = null;
+        $body = json_decode($response->getBody()->getContents(), true);
+
+        if (
+            is_array($body)
+            && array_key_exists('errors', $body)
+            && is_array($body['errors'])
+        ) {
+            foreach ($body['errors'] as $error) {
+                if (
+                    is_array($error)
+                    && array_key_exists('Code', $error)
+                    && array_key_exists('Message', $error)
+                ) {
+                    $code = BadRequestCode::tryFrom($error['Code']);
+                    if ($code !== null) {
+                        $exception = BadRequestException::make(
                             $code,
                             $error['Message'],
                             $exception,

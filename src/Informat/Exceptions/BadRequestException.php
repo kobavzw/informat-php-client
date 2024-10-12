@@ -2,21 +2,21 @@
 
 namespace Koba\Informat\Exceptions;
 
-use Koba\Informat\Enums\MethodNotAllowedCode;
+use Koba\Informat\Enums\BadRequestCode;
 use Throwable;
 
-class MethodNotAllowedException
+class BadRequestException
 extends InformatException
 implements HasErrorsExceptionInterface
 {
-    protected MethodNotAllowedCode $internalCode;
+    protected BadRequestCode $internalCode;
     protected string $originalMessage;
 
     /**
      * Creates a new method not allowed exception.
      */
     public static function make(
-        MethodNotAllowedCode $code,
+        BadRequestCode $code,
         string $message,
         ?Throwable $previous = null
     ): self {
@@ -28,7 +28,7 @@ implements HasErrorsExceptionInterface
     /**
      * Sets the code for the exception.
      */
-    protected function setInternalCode(MethodNotAllowedCode $code): self
+    protected function setInternalCode(BadRequestCode $code): self
     {
         $this->internalCode = $code;
         return $this;
