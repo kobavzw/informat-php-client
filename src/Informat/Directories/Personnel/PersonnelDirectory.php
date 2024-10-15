@@ -30,6 +30,14 @@ implements DirectoryInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    protected static function getErrorCodes(): ?string
+    {
+        return ErrorCode::class;
+    }
+
+    /**
      * Gets all the employees for the combination 
      * institute number, school year and structure.
      * 

@@ -8,17 +8,26 @@ use Koba\Informat\Directories\DirectoryInterface;
 use Koba\Informat\Directories\Preregistrations\CreatePreregistration\CreatePreregistrationCall;
 use Koba\Informat\Directories\Preregistrations\DeletePreregistration\DeletePreregistrationCall;
 use Koba\Informat\Directories\Preregistrations\GetPreregistrationStatus\GetPreregistrationStatusCall;
+use Koba\Informat\Directories\Students\ErrorCode;
 use Koba\Informat\Enums\BaseUrl;
 
 class PreregistrationsDirectory
 extends AbstractDirectory
 implements DirectoryInterface
 {
+    /**
+     * @inheritDoc
+     */
+    protected static function getErrorCodes(): ?string
+    {
+        return ErrorCode::class;
+    }
+
     public function getBaseUrl(): BaseUrl
     {
         return BaseUrl::STUDENT;
     }
-    
+
     /**
      * Gets the status of a pre-registration/registration 
      * by it's preRegistrationId.

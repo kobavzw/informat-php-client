@@ -14,6 +14,14 @@ class StudentsDirectory
 extends AbstractDirectory
 implements DirectoryInterface
 {
+    /**
+     * @inheritDoc
+     */
+    protected static function getErrorCodes(): ?string
+    {
+        return ErrorCode::class;
+    }
+
     public function getBaseUrl(): BaseUrl
     {
         return BaseUrl::STUDENT;

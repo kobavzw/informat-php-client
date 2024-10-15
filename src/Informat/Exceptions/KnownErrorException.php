@@ -2,25 +2,27 @@
 
 namespace Koba\Informat\Exceptions;
 
-use Koba\Informat\Enums\BadRequestCode;
+use BackedEnum;
+use Koba\Informat\Contracts\HasDescriptionInterface;
 use Throwable;
 
-class BadRequestException
+class KnownErrorException
 extends InformatException
 implements HasErrorsExceptionInterface
 {
-    protected BadRequestCode $internalCode;
+    protected BackedEnum&HasDescriptionInterface $internalCode;
     protected string $originalMessage;
 
     /**
      * Creates a new method not allowed exception.
      */
     public static function make(
-        BadRequestCode $code,
+        BackedEnum&HasDescriptionInterface $code,
         string $message,
+        int $responseCode,
         ?Throwable $previous = null
     ): self {
-        return (new self($code->getDescription(), 405,  $previous))
+        return (new self($code->getDescription(), $responseCode, $previous))
             ->setInternalCode($code)
             ->setOriginalMessage($message);
     }
@@ -28,8 +30,9 @@ implements HasErrorsExceptionInterface
     /**
      * Sets the code for the exception.
      */
-    protected function setInternalCode(BadRequestCode $code): self
-    {
+    protected function setInternalCode(
+        BackedEnum&HasDescriptionInterface $code
+    ): self {
         $this->internalCode = $code;
         return $this;
     }

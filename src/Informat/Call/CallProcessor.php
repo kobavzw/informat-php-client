@@ -2,14 +2,13 @@
 
 namespace Koba\Informat\Call;
 
+use BackedEnum;
 use Koba\Informat\AccessToken\AccessTokenManagerInterface;
-use Koba\Informat\Enums\BadRequestCode;
+use Koba\Informat\Contracts\HasDescriptionInterface;
 use Koba\Informat\Enums\HttpMethod;
-use Koba\Informat\Enums\MethodNotAllowedCode;
-use Koba\Informat\Exceptions\BadRequestException;
 use Koba\Informat\Exceptions\CallException;
 use Koba\Informat\Exceptions\InternalErrorException;
-use Koba\Informat\Exceptions\MethodNotAllowedException;
+use Koba\Informat\Exceptions\KnownErrorException;
 use Koba\Informat\Exceptions\NotFoundException;
 use Koba\Informat\Helpers\InstituteNumber;
 use Psr\Http\Client\ClientInterface;
@@ -20,12 +19,28 @@ use Throwable;
 
 class CallProcessor
 {
+    /**
+     * @var null|class-string<BackedEnum&HasDescriptionInterface> $errorCodes
+     */
+    protected ?string $errorCodes;
+
     public function __construct(
         protected AccessTokenManagerInterface $accessTokenManager,
         protected ClientInterface $httpClient,
         protected RequestFactoryInterface $requestFactory,
         protected StreamFactoryInterface $streamFactory,
     ) {}
+
+    /**
+     * Stelt de geldige error codes voor de calls.
+     * 
+     * @param null|class-string<BackedEnum&HasDescriptionInterface> $codes
+     */
+    public function setErrorCodes(?string $codes): self
+    {
+        $this->errorCodes = $codes;
+        return $this;
+    }
 
     public function buildRequest(
         string $url,
@@ -48,99 +63,67 @@ class CallProcessor
     /**
      * Sends the request.
      * 
+     * @throws KnownErrorException
      * @throws NotFoundException 
-     * @throws MethodNotAllowedException 
      * @throws CallException 
      * @throws InternalErrorException 
      */
     public function send(EncapsulatedRequest $request): ResponseInterface
     {
         $response = $this->httpClient->sendRequest($request->getRequest());
-
-        switch ($response->getStatusCode()) {
-            case 200:
-                return $response;
-            case 400:
-                $this->handleBadRequest($response);
-            case 404:
-                throw new NotFoundException;
-            case 405:
-                $this->handleMethodNotAllowed($response);
-            default:
-                throw $this->getGenericError($response);
+        
+        if ($response->getStatusCode() === 200) {
+            return $response;
         }
+
+        $this->handleErrorCodes($response);
+
+        if ($response->getStatusCode() === 404) {
+            throw new NotFoundException;
+        }
+
+        throw $this->getGenericError($response);
     }
 
     /**
-     * If a method not allowed response is return, this function will try
-     * to generate a specific exception for it and throw it. If this doesn't
-     * throw, generic error handling should be used.
+     * This function will try to map the error codes in the response to an
+     * exception.
      * 
-     * @throws MethodNotAllowedException
+     * @throws KnownErrorException
      */
-    protected function handleMethodNotAllowed(
-        ResponseInterface $response
-    ): void {
-        $exception = null;
-        $body = json_decode($response->getBody()->getContents(), true);
+    public function handleErrorCodes(ResponseInterface $response): void
+    {
+        if ($this->errorCodes === null) {
+            return;
+        }
 
+        $body = json_decode($response->getBody()->getContents(), true);
+        if (false === is_array($body)) {
+            return;
+        }
+
+        $exception = null;
+        $body = array_change_key_case($body, CASE_LOWER);
         if (
-            is_array($body)
-            && array_key_exists('errors', $body)
+            array_key_exists('errors', $body)
             && is_array($body['errors'])
         ) {
-            foreach ($body['errors'] as $error) {
-                if (
-                    is_array($error)
-                    && array_key_exists('Code', $error)
-                    && array_key_exists('Message', $error)
-                ) {
-                    $code = MethodNotAllowedCode::tryFrom($error['Code']);
-                    if ($code !== null) {
-                        $exception = MethodNotAllowedException::make(
-                            $code,
-                            $error['Message'],
-                            $exception,
-                        );
-                    }
+            foreach($body['errors'] as $error) {
+                if (false === is_array($error)) {
+                    continue;
                 }
-            }
-        }
 
-        if ($exception !== null) {
-            throw $exception;
-        }
-    }
-
-    /**
-     * If a method not allowed response is return, this function will try
-     * to generate a specific exception for it and throw it. If this doesn't
-     * throw, generic error handling should be used.
-     * 
-     * @throws BadRequestException
-     */
-    protected function handleBadRequest(
-        ResponseInterface $response
-    ): void {
-        $exception = null;
-        $body = json_decode($response->getBody()->getContents(), true);
-
-        if (
-            is_array($body)
-            && array_key_exists('errors', $body)
-            && is_array($body['errors'])
-        ) {
-            foreach ($body['errors'] as $error) {
+                $error = array_change_key_case($error, CASE_LOWER);
                 if (
-                    is_array($error)
-                    && array_key_exists('Code', $error)
-                    && array_key_exists('Message', $error)
+                    array_key_exists('code', $error)
+                    && array_key_exists('message', $error)
                 ) {
-                    $code = BadRequestCode::tryFrom($error['Code']);
+                    $code = $this->errorCodes::tryFrom($error['code']);
                     if ($code !== null) {
-                        $exception = BadRequestException::make(
+                        $exception = KnownErrorException::make(
                             $code,
-                            $error['Message'],
+                            $error['message'],
+                            $response->getStatusCode(),
                             $exception,
                         );
                     }
