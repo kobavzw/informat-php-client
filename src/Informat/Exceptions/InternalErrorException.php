@@ -2,6 +2,4 @@
 
 namespace Koba\Informat\Exceptions;
 
-class InternalErrorException extends InformatException
-{
-}
+class InternalErrorException extends InformatException {}

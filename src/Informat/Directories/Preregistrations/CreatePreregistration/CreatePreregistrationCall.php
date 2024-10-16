@@ -6,7 +6,6 @@ use DateTime;
 use Koba\Informat\Call\AbstractCall;
 use Koba\Informat\Directories\DirectoryInterface;
 use Koba\Informat\Enums\HttpMethod;
-use Koba\Informat\Exceptions\ValidationException;
 use Koba\Informat\Helpers\JsonMapper;
 use Koba\Informat\Helpers\Schoolyear;
 
@@ -72,42 +71,24 @@ extends AbstractCall
         DateTime $startDate,
         int $registrationStatus,
     ): self {
-        $call = new self($directory, $instituteNumber);
-
-        /** @var string[] $errors */
-        $errors = [];
-
-        foreach ([
-            'setLastName' => $lastName,
-            'setFirstName' => $firstName,
-            'setDateOfBirth' => $dateOfBirth,
-            'setCountryOfBirthCode' => $countryOfBirthCode,
-            'setNationalityCode' => $nationalityCode,
-            'setSex' => $sex,
-            'setIsHomeless' => $isHomeless,
-            'setMigrating' => $migrating,
-            'setIsIndicatorPupil' => $isIndicatorPupil,
-            'setPreRegistrationId' => $preRegistrationId,
-            'setSchoolyear' => $schoolyear,
-            'setStructure' => $structure,
-            'setLocationId' => $locationId,
-            'setAdmgrpId' => $admgrpId,
-            'setPreregistrationDate' => $preRegistrationDate,
-            'setStartDate' => $startDate,
-            'setRegistrationStatus' => $registrationStatus
-        ] as $fn => $value) {
-            try {
-                call_user_func([$call, $fn], $value);
-            } catch (ValidationException $e) {
-                $errors = [...$errors, ...$e->getErrors()];
-            }
-        }
-
-        if (count($errors) > 0) {
-            throw new ValidationException($errors);
-        }
-
-        return $call;
+        return (new self($directory, $instituteNumber))
+            ->setLastName($lastName)
+            ->setFirstName($firstName)
+            ->setDateOfBirth($dateOfBirth)
+            ->setCountryOfBirthCode($countryOfBirthCode)
+            ->setNationalityCode($nationalityCode)
+            ->setSex($sex)
+            ->setIsHomeless($isHomeless)
+            ->setMigrating($migrating)
+            ->setIsIndicatorPupil($isIndicatorPupil)
+            ->setPreRegistrationId($preRegistrationId)
+            ->setSchoolyear($schoolyear)
+            ->setStructure($structure)
+            ->setLocationId($locationId)
+            ->setAdmgrpId($admgrpId)
+            ->setPreregistrationDate($preRegistrationDate)
+            ->setStartDate($startDate)
+            ->setRegistrationStatus($registrationStatus);
     }
 
     /**
@@ -115,10 +96,6 @@ extends AbstractCall
      */
     public function setLastName(string $lastName): self
     {
-        if (strlen($lastName) > 50) {
-            throw new ValidationException('Achternaam mag maximum 50 karakters lang zijn.');
-        }
-
         $this->lastName = $lastName;
         return $this;
     }
@@ -128,10 +105,6 @@ extends AbstractCall
      */
     public function setFirstName(string $firstName): self
     {
-        if (strlen($firstName) > 50) {
-            throw new ValidationException('Voornaam mag maximum 50 karakters lang zijn.');
-        }
-
         $this->firstName = $firstName;
         return $this;
     }
@@ -141,10 +114,6 @@ extends AbstractCall
      */
     public function setAdditionalNames(?string $additionalNames): self
     {
-        if ($additionalNames !== null && strlen($additionalNames) > 160) {
-            throw new ValidationException('Extra namen mogen maximum 160 karakters lang zijn.');
-        }
-
         $this->additionalNames = $additionalNames;
         return $this;
     }
@@ -163,10 +132,6 @@ extends AbstractCall
      */
     public function setCountryOfBirthCode(string $countryOfBirthCode): self
     {
-        if (strlen($countryOfBirthCode) !== 5) {
-            throw new ValidationException('Land code moet exact 5 karakters bevatten.');
-        }
-
         $this->countryOfBirthCode = $countryOfBirthCode;
         return $this;
     }
@@ -177,10 +142,6 @@ extends AbstractCall
      */
     public function setPlaceOfBirthCode(?string $placeOfBirthCode): self
     {
-        if ($placeOfBirthCode !== null && strlen($placeOfBirthCode) > 10) {
-            throw new ValidationException('Geboorteplaats code mag maximum 10 karakters bevatten.');
-        }
-
         $this->placeOfBirthCode = $placeOfBirthCode;
         return $this;
     }
@@ -190,10 +151,6 @@ extends AbstractCall
      */
     public function setPlaceOfBirth(?string $placeOfBirth): self
     {
-        if ($placeOfBirth !== null && strlen($placeOfBirth) > 50) {
-            throw new ValidationException('Geboortplaats mag maximum 50 karakters lang zijn.');
-        }
-
         $this->placeOfBirth = $placeOfBirth;
         return $this;
     }
@@ -203,10 +160,6 @@ extends AbstractCall
      */
     public function setNationalityCode(string $nationalityCode): self
     {
-        if (strlen($nationalityCode) !== 5) {
-            throw new ValidationException('Nationaliteit code moet exact 5 karakters lang zijn.');
-        }
-
         $this->nationalityCode = $nationalityCode;
         return $this;
     }
@@ -219,10 +172,6 @@ extends AbstractCall
      */
     public function setSex(int $sex): self
     {
-        if ($sex !== 1 && $sex !== 2) {
-            throw new ValidationException('Geslacht moet 1 voor mannelijk of 2 voor vrouwelijk bevatten.');
-        }
-
         $this->sex = $sex;
         return $this;
     }
@@ -243,10 +192,6 @@ extends AbstractCall
      */
     public function setEIdNo(?string $eIdNo): self
     {
-        if ($eIdNo !== null && strlen($eIdNo) > 12) {
-            throw new ValidationException('Het eID-nummer mag maximum 12 karakters bevatten.');
-        }
-
         $this->eIdNo = $eIdNo;
         return $this;
     }
@@ -266,10 +211,6 @@ extends AbstractCall
      */
     public function setMobilePhone(?string $mobilePhone): self
     {
-        if ($mobilePhone !== null && strlen($mobilePhone) > 20) {
-            throw new ValidationException('GSM nummer mag niet langer zijn dan 20 karakters.');
-        }
-
         $this->mobilePhone = $mobilePhone;
         return $this;
     }
@@ -279,10 +220,6 @@ extends AbstractCall
      */
     public function setEmail(?string $email): self
     {
-        if ($email !== null && false === filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new ValidationException('Ongeldig e-mailadres.');
-        }
-
         $this->email = $email;
         return $this;
     }
@@ -292,10 +229,6 @@ extends AbstractCall
      */
     public function setNameOfDoctor(?string $nameOfDoctor): self
     {
-        if ($nameOfDoctor !== null && strlen($nameOfDoctor) > 100) {
-            throw new ValidationException('Naam van de dokter mag maximum 100 karakters lang zijn.');
-        }
-
         $this->nameOfDoctor = $nameOfDoctor;
         return $this;
     }
@@ -305,10 +238,6 @@ extends AbstractCall
      */
     public function setPhoneOfDoctor(?string $phoneOfDoctor): self
     {
-        if ($phoneOfDoctor !== null && strlen($phoneOfDoctor) > 20) {
-            throw new ValidationException('Het telefoonnummer van de dokter mag niet langer zijn dan 20 karakters.');
-        }
-
         $this->phoneOfDoctor = $phoneOfDoctor;
         return $this;
     }
@@ -318,10 +247,6 @@ extends AbstractCall
      */
     public function setFirstLanguage(?string $firstLanguage): self
     {
-        if ($firstLanguage !== null && strlen($firstLanguage) > 100) {
-            throw new ValidationException('De taal mag maximum 100 karakters bevatten.');
-        }
-
         $this->firstLanguage = $firstLanguage;
         return $this;
     }
@@ -362,23 +287,6 @@ extends AbstractCall
      */
     public function setReligion(?int $religion): self
     {
-        $religions = [
-            52,
-            63,
-            135,
-            136,
-            140,
-            187,
-            194,
-            225,
-            418,
-            9999,
-        ];
-
-        if ($religion !== null && false === in_array($religion, $religions)) {
-            throw new ValidationException('Ongeldige religie.');
-        }
-
         $this->religion = $religion;
         return $this;
     }
@@ -388,12 +296,6 @@ extends AbstractCall
      */
     public function setPriorityGroup(?int $priorityGroup): self
     {
-        $priorityGroups = [1, 2, 3, 4, 5, 6];
-
-        if ($priorityGroup !== null && false === in_array($priorityGroup, $priorityGroups)) {
-            throw new ValidationException('Ongeldige prioriteitsgroep.');
-        }
-
         $this->priorityGroup = $priorityGroup;
         return $this;
     }
@@ -403,10 +305,6 @@ extends AbstractCall
      */
     public function setReasonForRefusal(?int $reasonForRefusal): self
     {
-        if ($reasonForRefusal !== null && $reasonForRefusal !== 19) {
-            throw new ValidationException('Ongeldige reden tot weigering.');
-        }
-
         $this->reasonForRefusal = $reasonForRefusal;
         return $this;
     }
@@ -436,10 +334,6 @@ extends AbstractCall
      */
     public function setStructure(string $structure): self
     {
-        if (strlen($structure) !== 3) {
-            throw new ValidationException('Ongeldige structuur');
-        }
-
         $this->structure = $structure;
         return $this;
     }
@@ -449,10 +343,6 @@ extends AbstractCall
      */
     public function setLocationId(string $locationId): self
     {
-        if (1 !== preg_match('/^\d{3}$/', $locationId)) {
-            throw new ValidationException('Ongeldige locatie ID.');
-        }
-
         $this->locationId = $locationId;
         return $this;
     }
@@ -462,10 +352,6 @@ extends AbstractCall
      */
     public function setAdmgrpId(string $admgrpId): self
     {
-        if (1 !== preg_match('/^\d{6}$/', $admgrpId)) {
-            throw new ValidationException('Ongeldige administratieve groep.');
-        }
-
         $this->admgrpId = $admgrpId;
         return $this;
     }
@@ -475,10 +361,6 @@ extends AbstractCall
      */
     public function setAdmgrpDetail(?string $admgrpDetail): self
     {
-        if ($admgrpDetail !== null && strlen($admgrpDetail) > 200) {
-            throw new ValidationException('Het detail van de administratieve groep mag niet meer dan 200 karakters bevatten.');
-        }
-
         $this->admgrpDetail = $admgrpDetail;
         return $this;
     }
@@ -511,10 +393,6 @@ extends AbstractCall
      */
     public function setRegistrationStatus(int $registrationStatus): self
     {
-        if ($registrationStatus !== 0 && $registrationStatus !== 1) {
-            throw new ValidationException('Ongeldige registratie status.');
-        }
-
         $this->registrationStatus = $registrationStatus;
         return $this;
     }
@@ -545,10 +423,6 @@ extends AbstractCall
      */
     public function addRelation(Relation $relation): self
     {
-        if (count($this->relations) >= 2) {
-            throw new ValidationException('Je mag maximum 2 relaties per registratie doorgeven.');
-        }
-
         $this->relations[] = $relation;
         return $this;
     }

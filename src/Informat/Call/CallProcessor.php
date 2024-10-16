@@ -6,10 +6,9 @@ use BackedEnum;
 use Koba\Informat\AccessToken\AccessTokenManagerInterface;
 use Koba\Informat\Contracts\HasDescriptionInterface;
 use Koba\Informat\Enums\HttpMethod;
-use Koba\Informat\Exceptions\CallException;
-use Koba\Informat\Exceptions\InternalErrorException;
 use Koba\Informat\Exceptions\KnownErrorException;
 use Koba\Informat\Exceptions\NotFoundException;
+use Koba\Informat\Exceptions\UnknownErrorException;
 use Koba\Informat\Helpers\InstituteNumber;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -64,9 +63,8 @@ class CallProcessor
      * Sends the request.
      * 
      * @throws KnownErrorException
-     * @throws NotFoundException 
-     * @throws CallException 
-     * @throws InternalErrorException 
+     * @throws UnknownErrorException
+     * @throws NotFoundException
      */
     public function send(EncapsulatedRequest $request): ResponseInterface
     {
@@ -138,30 +136,10 @@ class CallProcessor
 
     /**
      * Returns a generic error.
-     * 
-     * @throws CallException
-     * @throws InternalErrorException
      */
     protected function getGenericError(ResponseInterface $response): Throwable
     {
-        $body = json_decode($response->getBody()->getContents(), true);
-
-        if (
-            is_array($body)
-            && array_key_exists('message', $body)
-            && array_key_exists('errors', $body)
-            && is_array($body['errors'])
-        ) {
-            return new CallException(
-                $body['message'],
-                array_map(
-                    fn(array $err) => $err['message'],
-                    $body['errors']
-                )
-            );
-        }
-
-        return new InternalErrorException(
+        return new UnknownErrorException(
             $response->getBody()->getContents(),
             $response->getStatusCode(),
         );

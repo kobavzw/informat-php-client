@@ -4,6 +4,4 @@ namespace Koba\Informat\Exceptions;
 
 use Exception;
 
-class InformatException extends Exception
-{
-}
+class InformatException extends Exception {}

@@ -2,6 +2,4 @@
 
 namespace Koba\Informat\Exceptions;
 
-class NotFoundException extends InformatException
-{
-}
+class NotFoundException extends InformatException {}
