@@ -54,6 +54,8 @@ class AccessTokenFetcher
             is_array($decoded)
             && array_key_exists('access_token', $decoded)
             && array_key_exists('expires_in', $decoded)
+            && is_string($decoded['access_token'])
+            && is_int($decoded['expires_in'])
         ) {
             return new AccessToken($decoded['access_token'], $decoded['expires_in']);
         }
