@@ -11,6 +11,14 @@ class Registration
     /** Unique identifier for the registration. Formatted as GUID. */
     public string $inschrijvingsId;
 
+    /** 
+     * Unique integer-value for the registration within the database
+     * 
+     * Note: This value may have changed after data migration. Therefore, the
+     * inschrijvingsId is more suitable as a reference value.
+     */
+    public int $pInschr;
+
     /** Unique integer-value for the student within the database */
     public int $pPersoon;
 
@@ -33,7 +41,7 @@ class Registration
     public string $vestcode;
 
     /** Own descriptive name of the location */
-    public string $vestigin;
+    public string $vestiging;
 
     /** Date the registration starts */
     public DateTime $begindatum;

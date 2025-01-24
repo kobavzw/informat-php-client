@@ -7,6 +7,23 @@ use Koba\Informat\Enums\GroupType;
 
 class Group
 {
+    /** Unique identifier for the class registration */
+    public string $inschrKlasId;
+
+    /**
+     * Unique integer-value for the class registration within the database.
+     * 
+     * Note: This value may have changed after data migration. Therefore, the
+     * inschrKlasId is more suitable as a reference value
+     */
+    public int $pInschrKlas;
+
+    /** Unique identifier for the class */
+    public string $klasId;
+
+    /** Unique integer-value for the class within the database. */
+    public int $pklas;
+
     /** Own class code */
     public string $klasCode;
 
