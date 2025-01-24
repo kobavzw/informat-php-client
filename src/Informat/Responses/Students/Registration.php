@@ -35,7 +35,7 @@ class Registration
     public string $school;
 
     /** Students’ stamnummer */
-    public string $stamnr;
+    public ?string $stamnr;
 
     /** Own defined location code */
     public string $vestcode;
