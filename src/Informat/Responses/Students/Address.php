@@ -20,16 +20,16 @@ class Address
     public string $straat;
 
     /** House number & Alpha number. */
-    public string $nr;
+    public ?string $nr;
 
     /** Bus number */
     public ?string $bus;
 
     /** Postal code (main) */
-    public string $postcode;
+    public ?string $postcode;
 
     /** Town (main) */
-    public string $gemeente;
+    public ?string $gemeente;
 
     /** Indicates whether this address is a invoice address. */
     public bool $isFacturatie;
