@@ -111,7 +111,7 @@ class Registration
 
     /**
      * List of class registrations
-     * @var Group[] $inschrklassen
+     * @var Group[] $inschrKlassen
      */
-    public array $inschrklassen;
+    public array $inschrKlassen;
 }

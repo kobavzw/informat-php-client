@@ -22,7 +22,7 @@ class Group
     public string $klasId;
 
     /** Unique integer-value for the class within the database. */
-    public int $pklas;
+    public int $pKlas;
 
     /** Own class code */
     public string $klasCode;
