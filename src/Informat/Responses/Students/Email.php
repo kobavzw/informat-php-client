@@ -8,7 +8,7 @@ class Email
     public int $pEmail;
 
     /** Email address. */
-    public string $mail;
+    public string $email;
 
     /** Email address type. */
     public string $type;
