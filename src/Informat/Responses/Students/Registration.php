@@ -38,7 +38,7 @@ class Registration
     public ?string $stamnr;
 
     /** Own defined location code */
-    public string $vestcode;
+    public string $vestCode;
 
     /** Own descriptive name of the location */
     public string $vestiging;
