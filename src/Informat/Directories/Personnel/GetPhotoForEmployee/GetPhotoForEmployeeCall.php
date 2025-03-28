@@ -53,7 +53,7 @@ implements HasQueryParamsInterface
      */
     public function send(): mixed
     {
-        return (new JsonMapper)->mapArray(
+        return (new JsonMapper)->mapObject(
             $this->performRequest(),
             Photo::class
         );

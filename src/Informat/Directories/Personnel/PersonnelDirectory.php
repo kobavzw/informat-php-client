@@ -16,6 +16,8 @@ use Koba\Informat\Directories\Personnel\GetEmployees\GetEmployeesCall;
 use Koba\Informat\Directories\Personnel\GetInterruptions\GetInterruptionsCall;
 use Koba\Informat\Directories\Personnel\GetInterruptionsForEmployee\GetInterruptionsForEmployeeCall;
 use Koba\Informat\Directories\Personnel\GetOwnFields\GetOwnFieldsCall;
+use Koba\Informat\Directories\Personnel\GetPhotoForEmployee\GetPhotoForEmployeeCall;
+use Koba\Informat\Directories\Personnel\GetPhotos\GetPhotosCall;
 use Koba\Informat\Enums\BaseUrl;
 use Koba\Informat\Enums\InterruptionCode;
 use Koba\Informat\Helpers\File;
@@ -243,5 +245,26 @@ implements DirectoryInterface
             $interruptionId,
             $attachmentId
         );
+    }
+
+    /**
+     * Gets all the photos for the combination institute number, school year 
+     * and structure.
+     */
+    public function getPhotos(
+        string $instituteNumber,
+        null|int|string $schoolyear = null,
+    ): GetPhotosCall {
+        return GetPhotosCall::make($this, $instituteNumber, $schoolyear);
+    }
+
+    /**
+     * Gets an employee’s photo by personId
+     */
+    public function getPhotoForEmployee(
+        string $instituteNumber,
+        string $personId,
+    ): GetPhotoForEmployeeCall {
+        return GetPhotoForEmployeeCall::make($this, $instituteNumber, $personId);
     }
 }
