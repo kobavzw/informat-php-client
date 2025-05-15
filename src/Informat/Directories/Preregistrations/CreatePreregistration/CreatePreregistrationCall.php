@@ -469,7 +469,7 @@ extends AbstractCall
             'admgrpDetail' => $this->admgrpDetail,
             'preRegistrationDate' => $this->preRegistrationDate === null
                 ? null
-                : $this->preRegistrationDate->format('Y-m-d'),
+                : $this->preRegistrationDate->format('c'),
             'startDate' => $this->startDate->format('Y-m-d'),
             'registrationStatus' => $this->registrationStatus,
             'remark' => $this->remark,
