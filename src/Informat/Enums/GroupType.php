@@ -6,4 +6,5 @@ enum GroupType: int
 {
     case MAIN = 0;
     case SUB = 1;
+    case OLOD = 3;
 }
