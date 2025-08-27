@@ -38,7 +38,7 @@ class Student
     public ?string $geboorteplaats;
 
     /** Student’s official nationality codes. */
-    public string $nationaliteitCode;
+    public ?string $nationaliteitCode;
 
     /** Student’s national registration number for Belgium residents. */
     public ?string $rijksregisternr;
