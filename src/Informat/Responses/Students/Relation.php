@@ -20,7 +20,7 @@ class Relation
     public string $type;
 
     /** Relation’s last name */
-    public string $naam;
+    public ?string $naam;
 
     /** Relation’s first name */
     public ?string $voornaam;
