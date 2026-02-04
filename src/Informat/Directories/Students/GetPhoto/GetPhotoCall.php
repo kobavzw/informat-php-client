@@ -6,6 +6,7 @@ use Koba\Informat\Call\AbstractCall;
 use Koba\Informat\Directories\DirectoryInterface;
 use Koba\Informat\Enums\HttpMethod;
 use Koba\Informat\Helpers\JsonMapper;
+use TypeError;
 
 class GetPhotoCall
 extends AbstractCall
@@ -43,12 +44,16 @@ extends AbstractCall
     /**
      * Perform the API call.
      */
-    public function send(): Photo
+    public function send(): ?Photo
     {
-        return (new JsonMapper)->mapProperty(
-            $this->performRequest(),
-            'photo',
-            Photo::class
-        );
+        try {
+            return (new JsonMapper)->mapProperty(
+                $this->performRequest(),
+                'photo',
+                Photo::class
+            );
+        } catch (TypeError) {
+            return null;
+        }
     }
 }
