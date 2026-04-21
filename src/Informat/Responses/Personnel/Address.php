@@ -23,7 +23,7 @@ class Address
     public ?string $bus;
 
     /** Main postal code. */
-    public string $postcode;
+    public ?string $postcode;
 
     /** Submunicipality. */
     public ?string $gemeente;
