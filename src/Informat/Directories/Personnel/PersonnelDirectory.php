@@ -2,15 +2,13 @@
 
 namespace Koba\Informat\Directories\Personnel;
 
-use DateTime;
-use Koba\Informat\Directories\AbstractDirectory;
-use Koba\Informat\Directories\DirectoryInterface;
 use Koba\Informat\Directories\Personnel\CreateInterruption\CreateInterruptionCall;
 use Koba\Informat\Directories\Personnel\CreateInterruptionAttachment\CreateInterruptionAttachmentCall;
 use Koba\Informat\Directories\Personnel\DeleteInterruption\DeleteInterruptionCall;
 use Koba\Informat\Directories\Personnel\DeleteInterruptionAttachment\DeleteInterruptionAttachmentCall;
 use Koba\Informat\Directories\Personnel\GetDiplomas\GetDiplomasCall;
 use Koba\Informat\Directories\Personnel\GetDiplomasForEmployee\GetDiplomasForEmployeeCall;
+use Koba\Informat\Directories\Personnel\GetDocuments\GetDocumentsCall;
 use Koba\Informat\Directories\Personnel\GetEmployee\GetEmployeeCall;
 use Koba\Informat\Directories\Personnel\GetEmployees\GetEmployeesCall;
 use Koba\Informat\Directories\Personnel\GetInterruptions\GetInterruptionsCall;
@@ -18,13 +16,14 @@ use Koba\Informat\Directories\Personnel\GetInterruptionsForEmployee\GetInterrupt
 use Koba\Informat\Directories\Personnel\GetOwnFields\GetOwnFieldsCall;
 use Koba\Informat\Directories\Personnel\GetPhotoForEmployee\GetPhotoForEmployeeCall;
 use Koba\Informat\Directories\Personnel\GetPhotos\GetPhotosCall;
+use Koba\Informat\Directories\AbstractDirectory;
+use Koba\Informat\Directories\DirectoryInterface;
 use Koba\Informat\Enums\BaseUrl;
 use Koba\Informat\Enums\InterruptionCode;
 use Koba\Informat\Helpers\File;
+use DateTime;
 
-class PersonnelDirectory
-extends AbstractDirectory
-implements DirectoryInterface
+class PersonnelDirectory extends AbstractDirectory implements DirectoryInterface
 {
     public function getBaseUrl(): BaseUrl
     {
@@ -40,19 +39,19 @@ implements DirectoryInterface
     }
 
     /**
-     * Gets all the employees for the combination 
+     * Gets all the employees for the combination
      * institute number, school year and structure.
-     * 
-     * @param null|int|string $schoolyear 
-     * For current & future school years: It limits the output results 
+     *
+     * @param null|int|string $schoolyear
+     * For current & future school years: It limits the output results
      * to employees with an assignment within the given schoolyear
      * or which are marked as active for your instituteNo.
-     * 
+     *
      * For passed school years: It limits the output results to employees
      * with an assignment within the given schoolyear (and instituteNo).
-     * Also used to determine the instituteNo’s for the properties 
+     * Also used to determine the instituteNo’s for the properties
      * “EersteDienstScholengroep” and “EersteDienstScholengemeenschap”.
-     * 
+     *
      * Pass null for current school year.
      */
     public function getEmployees(
@@ -68,12 +67,12 @@ implements DirectoryInterface
 
     /**
      * Gets an employee by it’s personId.
-     * 
+     *
      * @param string $personId
      * Limits the output results to an employee with the provided personId.
      * Should contain a GUID.
      * @param null|int|string $schoolyear
-     * Only used to determine the instituteNo’s for the properties 
+     * Only used to determine the instituteNo’s for the properties
      * “EersteDienstScholengroep” and “EersteDienstScholengemeenschap”.
      */
     public function getEmployee(
@@ -100,9 +99,9 @@ implements DirectoryInterface
         );
     }
 
-    /** 
-     * Gets all the interruptions for the combination institute number, 
-     * school year and structure.   
+    /**
+     * Gets all the interruptions for the combination institute number,
+     * school year and structure.
      */
     public function getInterruptions(
         string $instituteNumber,
@@ -116,7 +115,7 @@ implements DirectoryInterface
     }
 
     /**
-     * Gets an employee’s interruptions by personId and for the combination 
+     * Gets an employee’s interruptions by personId and for the combination
      * institute number, school year and structure.
      */
     public function getInterruptionsForEmployee(
@@ -208,10 +207,10 @@ implements DirectoryInterface
 
     /**
      * This call can be used to:
-     * - Add a new attachment into Informat linked to an interruption 
+     * - Add a new attachment into Informat linked to an interruption
      *   (interruptionId);
      * - Update an existing interruption-attachment based on the given
-     *   attachmentId. An attachment can be linked to multiple interruptions of 
+     *   attachmentId. An attachment can be linked to multiple interruptions of
      *   the same employee.
      */
     public function createInterruptionAttachment(
@@ -231,7 +230,7 @@ implements DirectoryInterface
 
     /**
      * Remove the link between an interruption and an attachment. If no other
-     * interruption is linked to this attachment then the attachment itself 
+     * interruption is linked to this attachment then the attachment itself
      * will also be removed.
      */
     public function deleteInterruptionAttachment(
@@ -248,7 +247,7 @@ implements DirectoryInterface
     }
 
     /**
-     * Gets all the photos for the combination institute number, school year 
+     * Gets all the photos for the combination institute number, school year
      * and structure.
      */
     public function getPhotos(
@@ -266,5 +265,28 @@ implements DirectoryInterface
         string $personId,
     ): GetPhotoForEmployeeCall {
         return GetPhotoForEmployeeCall::make($this, $instituteNumber, $personId);
+    }
+
+    /**
+     * RL documents are official messages submitted by a school to the Flemish government (AGODI) through the Edison channel.
+     *
+     * Two types are supported:
+     * RL1 – Opdrachtenpakket (work-package description for an employee).
+     * RL2 – Notification, supplement or cancellation of a service interruption.
+     *
+     * The typical integration flow is:
+     * Fetch the list of available RL documents for a school year.
+     * Store the highest “edisonStatusGewijzigdOp” value from the response as a watermark.
+     * On subsequent calls, pass that watermark via “referencedate” to retrieve only documents whose Edison
+     * status has changed since that timestamp.
+     * Download the PDF for each document via the dedicated PDF endpoint.
+     * Present the PDF in your own signing environment (employee signs, refuses, or a technical failure occurs).
+     * Submit the outcome (and, when signed, the signed PDF) back to Informat.
+     */
+    public function getDocuments(
+        string $instituteNumber,
+        null|int|string $schoolyear = null,
+    ): GetDocumentsCall {
+        return GetDocumentsCall::make($this, $instituteNumber, $schoolyear);
     }
 }
