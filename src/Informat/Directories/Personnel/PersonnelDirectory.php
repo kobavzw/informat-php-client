@@ -8,6 +8,7 @@ use Koba\Informat\Directories\Personnel\DeleteInterruption\DeleteInterruptionCal
 use Koba\Informat\Directories\Personnel\DeleteInterruptionAttachment\DeleteInterruptionAttachmentCall;
 use Koba\Informat\Directories\Personnel\GetDiplomas\GetDiplomasCall;
 use Koba\Informat\Directories\Personnel\GetDiplomasForEmployee\GetDiplomasForEmployeeCall;
+use Koba\Informat\Directories\Personnel\GetDocument\GetDocumentCall;
 use Koba\Informat\Directories\Personnel\GetDocuments\GetDocumentsCall;
 use Koba\Informat\Directories\Personnel\GetEmployee\GetEmployeeCall;
 use Koba\Informat\Directories\Personnel\GetEmployees\GetEmployeesCall;
@@ -288,5 +289,13 @@ class PersonnelDirectory extends AbstractDirectory implements DirectoryInterface
         null|int|string $schoolyear = null,
     ): GetDocumentsCall {
         return GetDocumentsCall::make($this, $instituteNumber, $schoolyear);
+    }
+
+    public function getDocument(
+        string $instituteNumber,
+        string $personId,
+        int $documentId,
+    ): GetDocumentCall {
+        return GetDocumentCall::make($this, $instituteNumber, $personId, $documentId);
     }
 }
