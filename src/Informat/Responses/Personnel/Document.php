@@ -2,9 +2,9 @@
 
 namespace Koba\Informat\Responses\Personnel;
 
-use DateTime;
 use Koba\Informat\Enums\RlTekenStatus;
 use Koba\Informat\Enums\RlType;
+use DateTime;
 
 class Document
 {
@@ -54,5 +54,5 @@ class Document
     /**
      * RL1 only. The RL1 effective date. Omitted from the response for RL2 documents.
      */
-    public ?DateTime $rl1Ingangsdatum;
+    public ?DateTime $rl1Ingangsdatum = null;
 }
