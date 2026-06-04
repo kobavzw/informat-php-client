@@ -22,9 +22,9 @@ abstract class AbstractCall implements CallInterface
     }
 
     /**
-     * @return null|string|array<mixed>
+     * @return null|string|array<mixed>|MultipartBody
      */
-    protected function getBody(): null|string|array
+    protected function getBody(): null|string|array|MultipartBody
     {
         return null;
     }

@@ -69,8 +69,9 @@ class CallProcessor
     public function send(EncapsulatedRequest $request): ResponseInterface
     {
         $response = $this->httpClient->sendRequest($request->getRequest());
-        
-        if ($response->getStatusCode() === 200) {
+
+        $status = $response->getStatusCode();
+        if ($status >= 200 && $status < 300) {
             return $response;
         }
 
@@ -106,7 +107,7 @@ class CallProcessor
             array_key_exists('errors', $body)
             && is_array($body['errors'])
         ) {
-            foreach($body['errors'] as $error) {
+            foreach ($body['errors'] as $error) {
                 if (false === is_array($error)) {
                     continue;
                 }

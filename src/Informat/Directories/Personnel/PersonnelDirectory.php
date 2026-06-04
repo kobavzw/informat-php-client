@@ -17,12 +17,16 @@ use Koba\Informat\Directories\Personnel\GetInterruptionsForEmployee\GetInterrupt
 use Koba\Informat\Directories\Personnel\GetOwnFields\GetOwnFieldsCall;
 use Koba\Informat\Directories\Personnel\GetPhotoForEmployee\GetPhotoForEmployeeCall;
 use Koba\Informat\Directories\Personnel\GetPhotos\GetPhotosCall;
+use Koba\Informat\Directories\Personnel\SubmitSignedDocument\SubmitSignedDocumentCall;
 use Koba\Informat\Directories\AbstractDirectory;
 use Koba\Informat\Directories\DirectoryInterface;
 use Koba\Informat\Enums\BaseUrl;
 use Koba\Informat\Enums\InterruptionCode;
+use Koba\Informat\Enums\RlTekenStatus;
 use Koba\Informat\Helpers\File;
 use DateTime;
+use DateTimeInterface;
+use SplFileObject;
 
 class PersonnelDirectory extends AbstractDirectory implements DirectoryInterface
 {
@@ -297,5 +301,30 @@ class PersonnelDirectory extends AbstractDirectory implements DirectoryInterface
         int $documentId,
     ): GetDocumentCall {
         return GetDocumentCall::make($this, $instituteNumber, $personId, $documentId);
+    }
+
+    /**
+     * Submits the outcome of an external RL document signing procedure.
+     *
+     * Pass the signed PDF file in $bestand when status is Ondertekend.
+     * Omit it for Geweigerd, Bekeken and Mislukt.
+     */
+    public function submitSignedDocument(
+        string $instituteNumber,
+        string $personId,
+        int $documentId,
+        RlTekenStatus $status,
+        DateTimeInterface $tijdstip,
+        ?SplFileObject $bestand = null,
+    ): SubmitSignedDocumentCall {
+        return SubmitSignedDocumentCall::make(
+            $this,
+            $instituteNumber,
+            $personId,
+            $documentId,
+            $status,
+            $tijdstip,
+            $bestand
+        );
     }
 }

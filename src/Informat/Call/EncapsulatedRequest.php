@@ -20,10 +20,18 @@ class EncapsulatedRequest
     }
 
     /**
-     * @param array<mixed>|string $body
+     * @param array<mixed>|string|MultipartBody $body
      */
-    public function withBody(array|string $body): self
+    public function withBody(array|string|MultipartBody $body): self
     {
+        if ($body instanceof MultipartBody) {
+            $this->request = $this->request
+                ->withHeader('Content-Type', $body->getContentType())
+                ->withBody($this->streamFactory->createStream($body->toString()));
+
+            return $this;
+        }
+
         if (is_array($body)) {
             $body = json_encode($body);
         }
