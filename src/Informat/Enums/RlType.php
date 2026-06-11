@@ -6,4 +6,5 @@ enum RlType: string
 {
     case RL1 = 'RL1';
     case RL2 = 'RL2';
+    case RL4 = 'RL4';
 }

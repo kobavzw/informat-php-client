@@ -55,4 +55,10 @@ class Document
      * RL1 only. The RL1 effective date. Omitted from the response for RL2 documents.
      */
     public ?DateTime $rl1Ingangsdatum = null;
+
+    /**
+     * RL4 only. The RL4 effective date.  Omitted from the response for nonRL4 documents. 
+     * Returned as null when no RL4_ingangsdatum is available for the linked Berichten record.
+     */
+    public ?DateTime $rl4Ingangsdatum = null;
 }
