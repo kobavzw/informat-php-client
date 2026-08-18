@@ -33,7 +33,7 @@ class GetDocumentsEdisonCall extends AbstractCall implements HasQueryParamsInter
 
     protected function getEndpoint(): string
     {
-        return 'employees/documents/edsion';
+        return 'employees/documents/edison';
     }
 
     public function setSchoolyear(null|int|string $schoolyear): self
