@@ -8,8 +8,10 @@ use Koba\Informat\Directories\Personnel\DeleteInterruption\DeleteInterruptionCal
 use Koba\Informat\Directories\Personnel\DeleteInterruptionAttachment\DeleteInterruptionAttachmentCall;
 use Koba\Informat\Directories\Personnel\GetDiplomas\GetDiplomasCall;
 use Koba\Informat\Directories\Personnel\GetDiplomasForEmployee\GetDiplomasForEmployeeCall;
-use Koba\Informat\Directories\Personnel\GetDocument\GetDocumentCall;
-use Koba\Informat\Directories\Personnel\GetDocuments\GetDocumentsCall;
+use Koba\Informat\Directories\Personnel\GetDocument\GetDocumentEdisonCall;
+use Koba\Informat\Directories\Personnel\GetDocument\GetDocumentPersonaCall;
+use Koba\Informat\Directories\Personnel\GetDocuments\GetDocumentsEdisonCall;
+use Koba\Informat\Directories\Personnel\GetDocuments\GetDocumentsPersonaCall;
 use Koba\Informat\Directories\Personnel\GetEmployee\GetEmployeeCall;
 use Koba\Informat\Directories\Personnel\GetEmployees\GetEmployeesCall;
 use Koba\Informat\Directories\Personnel\GetInterruptions\GetInterruptionsCall;
@@ -17,7 +19,8 @@ use Koba\Informat\Directories\Personnel\GetInterruptionsForEmployee\GetInterrupt
 use Koba\Informat\Directories\Personnel\GetOwnFields\GetOwnFieldsCall;
 use Koba\Informat\Directories\Personnel\GetPhotoForEmployee\GetPhotoForEmployeeCall;
 use Koba\Informat\Directories\Personnel\GetPhotos\GetPhotosCall;
-use Koba\Informat\Directories\Personnel\SubmitSignedDocument\SubmitSignedDocumentCall;
+use Koba\Informat\Directories\Personnel\SubmitSignedDocument\SubmitSignedDocumentEdisonCall;
+use Koba\Informat\Directories\Personnel\SubmitSignedDocument\SubmitSignedDocumentPersonaCall;
 use Koba\Informat\Directories\AbstractDirectory;
 use Koba\Informat\Directories\DirectoryInterface;
 use Koba\Informat\Enums\BaseUrl;
@@ -275,9 +278,10 @@ class PersonnelDirectory extends AbstractDirectory implements DirectoryInterface
     /**
      * RL documents are official messages submitted by a school to the Flemish government (AGODI) through the Edison channel.
      *
-     * Two types are supported:
+     * Trhee types are supported:
      * RL1 – Opdrachtenpakket (work-package description for an employee).
      * RL2 – Notification, supplement or cancellation of a service interruption.
+     * RL4 - Modification of a running RL1 (change to the work-package).
      *
      * The typical integration flow is:
      * Fetch the list of available RL documents for a school year.
@@ -288,36 +292,76 @@ class PersonnelDirectory extends AbstractDirectory implements DirectoryInterface
      * Present the PDF in your own signing environment (employee signs, refuses, or a technical failure occurs).
      * Submit the outcome (and, when signed, the signed PDF) back to Informat.
      */
-    public function getDocuments(
+    public function getDocumentsEdison(
         string $instituteNumber,
         null|int|string $schoolyear = null,
-    ): GetDocumentsCall {
-        return GetDocumentsCall::make($this, $instituteNumber, $schoolyear);
+    ): GetDocumentsEdisonCall {
+        return GetDocumentsEdisonCall::make($this, $instituteNumber, $schoolyear);
     }
 
-    public function getDocument(
+    public function getDocumentEdison(
         string $instituteNumber,
         string $personId,
         int $documentId,
-    ): GetDocumentCall {
-        return GetDocumentCall::make($this, $instituteNumber, $personId, $documentId);
+    ): GetDocumentEdisonCall {
+        return GetDocumentEdisonCall::make($this, $instituteNumber, $personId, $documentId);
     }
 
     /**
      * Submits the outcome of an external RL document signing procedure.
-     *
-     * Pass the signed PDF file in $bestand when status is Ondertekend.
-     * Omit it for Geweigerd, Bekeken and Mislukt.
      */
-    public function submitSignedDocument(
+    public function submitSignedDocumentEdison(
         string $instituteNumber,
         string $personId,
         int $documentId,
         RlTekenStatus $status,
         DateTimeInterface $tijdstip,
         ?SplFileObject $bestand = null,
-    ): SubmitSignedDocumentCall {
-        return SubmitSignedDocumentCall::make(
+    ): SubmitSignedDocumentEdisonCall {
+        return SubmitSignedDocumentEdisonCall::make(
+            $this,
+            $instituteNumber,
+            $personId,
+            $documentId,
+            $status,
+            $tijdstip,
+            $bestand
+        );
+    }
+
+    /**
+     * Persona documents are messages a school sends to AgODi through the Persona channel
+     *
+     * The flow mirrors the RL / Edison documents
+     * but on the /employees/documents/persona/... paths, with Persona-specific message types and statuses.
+     */
+    public function getDocumentsPersona(
+        string $instituteNumber,
+        null|int|string $schoolyear = null,
+    ): GetDocumentsPersonaCall {
+        return GetDocumentsPersonaCall::make($this, $instituteNumber, $schoolyear);
+    }
+
+    public function getDocumentPersona(
+        string $instituteNumber,
+        string $personId,
+        int $documentId,
+    ): GetDocumentPersonaCall {
+        return GetDocumentPersonaCall::make($this, $instituteNumber, $personId, $documentId);
+    }
+
+    /**
+     * Submits the outcome of an external signing procedure for a Persona document to Informat.
+     */
+    public function submitSignedDocumentPersona(
+        string $instituteNumber,
+        string $personId,
+        int $documentId,
+        RlTekenStatus $status,
+        DateTimeInterface $tijdstip,
+        ?SplFileObject $bestand = null,
+    ): SubmitSignedDocumentPersonaCall {
+        return SubmitSignedDocumentPersonaCall::make(
             $this,
             $instituteNumber,
             $personId,

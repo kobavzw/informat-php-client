@@ -2,7 +2,6 @@
 
 namespace Koba\Informat\Directories\Personnel\GetDocuments;
 
-use DateTimeInterface;
 use Koba\Informat\Call\AbstractCall;
 use Koba\Informat\Call\HasQueryParamsInterface;
 use Koba\Informat\Call\HasQueryParamsTrait;
@@ -11,9 +10,10 @@ use Koba\Informat\Enums\HttpMethod;
 use Koba\Informat\Enums\RlType;
 use Koba\Informat\Helpers\JsonMapper;
 use Koba\Informat\Helpers\Schoolyear;
-use Koba\Informat\Responses\Personnel\Document;
+use Koba\Informat\Responses\Personnel\DocumentEdison;
+use DateTimeInterface;
 
-class GetDocumentsCall extends AbstractCall implements HasQueryParamsInterface
+class GetDocumentsEdisonCall extends AbstractCall implements HasQueryParamsInterface
 {
     use HasQueryParamsTrait;
 
@@ -33,7 +33,7 @@ class GetDocumentsCall extends AbstractCall implements HasQueryParamsInterface
 
     protected function getEndpoint(): string
     {
-        return 'employees/documents';
+        return 'employees/documents/edsion';
     }
 
     public function setSchoolyear(null|int|string $schoolyear): self
@@ -43,13 +43,20 @@ class GetDocumentsCall extends AbstractCall implements HasQueryParamsInterface
     }
 
     /**
-     * Filter by RL type. Allowed values: RL1, RL2. May be repeated to filter on multiple types
-     * (e.g.b?rlType=RL1&rlType=RL2). If omitted, both RL1 and API Version 2 Document Version v2.12 64
-     * RL2 are returned. An unsupported value returns HTTP 400 (BR_DOC_007)
+     * Filter by RL type. Allowed values:RL1, RL2, RL4.
+     * May be repeated (e.g. rlType=RL1&rlType=RL4).
+     * When omitted, all supported types are returned.
+     *
+     * @param RlType|array<int, RlType> $rlType
      */
-    public function setRlType(RlType $rlType): self
+    public function setRlType(RlType|array $rlType): self
     {
-        $this->setQueryParam('rlType', $rlType->value);
+        $rlTypes = is_array($rlType) ? $rlType : [$rlType];
+
+        foreach ($rlTypes as $type) {
+            $this->setQueryParam('rlType', $type->value);
+        }
+
         return $this;
     }
 
@@ -60,20 +67,20 @@ class GetDocumentsCall extends AbstractCall implements HasQueryParamsInterface
      */
     public function setReferenceDate(DateTimeInterface $date): self
     {
-        $this->setQueryParam('referencedate', $date->format('Y-m-d'));
+        $this->setQueryParam('referencedate', $date->format('c'));
         return $this;
     }
 
     /**
-     * Perform the API call. 
-     * 
-     * @return Document[]
+     * Perform the API call.
+     *
+     * @return DocumentEdison[]
      */
     public function send(): array
     {
         return (new JsonMapper)->mapArray(
             $this->performRequest(),
-            Document::class
+            DocumentEdison::class
         );
     }
 }

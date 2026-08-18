@@ -6,7 +6,7 @@ use Koba\Informat\Enums\RlTekenStatus;
 use Koba\Informat\Enums\RlType;
 use DateTime;
 
-class Document
+class DocumentEdison
 {
     /**
      * Unique id of the document. Use this value as {documentId} in the PDF and SignedDocument endpoints.
@@ -57,7 +57,7 @@ class Document
     public ?DateTime $rl1Ingangsdatum = null;
 
     /**
-     * RL4 only. The RL4 effective date.  Omitted from the response for nonRL4 documents. 
+     * RL4 only. The RL4 effective date.  Omitted from the response for nonRL4 documents.
      * Returned as null when no RL4_ingangsdatum is available for the linked Berichten record.
      */
     public ?DateTime $rl4Ingangsdatum = null;

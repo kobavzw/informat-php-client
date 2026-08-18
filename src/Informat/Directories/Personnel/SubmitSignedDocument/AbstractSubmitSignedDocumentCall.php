@@ -2,17 +2,16 @@
 
 namespace Koba\Informat\Directories\Personnel\SubmitSignedDocument;
 
-use DateTimeInterface;
 use Koba\Informat\Call\AbstractCall;
 use Koba\Informat\Call\MultipartBody;
-use Koba\Informat\Directories\DirectoryInterface;
 use Koba\Informat\Enums\HttpMethod;
 use Koba\Informat\Enums\RlTekenStatus;
 use Koba\Informat\Exceptions\InternalErrorException;
 use Psr\Http\Message\ResponseInterface;
+use DateTimeInterface;
 use SplFileObject;
 
-class SubmitSignedDocumentCall extends AbstractCall
+abstract class AbstractSubmitSignedDocumentCall extends AbstractCall
 {
     protected string $personId;
     protected int $documentId;
@@ -21,31 +20,16 @@ class SubmitSignedDocumentCall extends AbstractCall
     protected ?string $bestand = null;
     protected ?string $filename = null;
 
-    public static function make(
-        DirectoryInterface $directory,
-        string $instituteNumber,
-        string $personId,
-        int $documentId,
-        string|RlTekenStatus $status,
-        string|DateTimeInterface $tijdstip,
-        ?SplFileObject $bestand = null,
-    ): self {
-        return (new self($directory, $instituteNumber))
-            ->setPersonId($personId)
-            ->setDocumentId($documentId)
-            ->setStatus($status)
-            ->setTijdstip($tijdstip)
-            ->setBestand($bestand);
-    }
-
     protected function getMethod(): HttpMethod
     {
         return HttpMethod::POST;
     }
 
+    abstract protected function getType(): string;
+
     protected function getEndpoint(): string
     {
-        return "employees/{$this->personId}/documents/{$this->documentId}/signeddocument";
+        return "employees/{$this->personId}/documents/{$this->getType()}/{$this->documentId}/signeddocument";
     }
 
     protected function getBody(): MultipartBody
@@ -70,28 +54,39 @@ class SubmitSignedDocumentCall extends AbstractCall
         return $body;
     }
 
-    public function setPersonId(string $personId): self
+    public function setPersonId(string $personId): static
     {
         $this->personId = $personId;
         return $this;
     }
 
-    public function setDocumentId(int $documentId): self
+    public function setDocumentId(int $documentId): static
     {
         $this->documentId = $documentId;
         return $this;
     }
 
-    public function setStatus(string|RlTekenStatus $status): self
+    public function setStatus(string|RlTekenStatus $status): static
     {
-        $this->status = is_string($status)
+        $status = is_string($status)
             ? RlTekenStatus::from($status)
             : $status;
+
+        $allowed = [
+            RlTekenStatus::ONDERTEKEND,
+            RlTekenStatus::GEWEIGERD,
+        ];
+
+        if (!in_array($status, $allowed, true)) {
+            throw new InternalErrorException("Status '{$status->value}' cannot be submitted to this endpoint.");
+        }
+
+        $this->status = $status;
 
         return $this;
     }
 
-    public function setTijdstip(string|DateTimeInterface $tijdstip): self
+    public function setTijdstip(string|DateTimeInterface $tijdstip): static
     {
         $this->tijdstip = is_string($tijdstip)
             ? $tijdstip
@@ -103,7 +98,7 @@ class SubmitSignedDocumentCall extends AbstractCall
     /**
      * Sets the signed PDF file. Only use this when status is Ondertekend.
      */
-    public function setBestand(?SplFileObject $bestand): self
+    public function setBestand(?SplFileObject $bestand): static
     {
         if ($bestand === null) {
             $this->bestand = null;
@@ -114,7 +109,7 @@ class SubmitSignedDocumentCall extends AbstractCall
         $bestand->rewind();
         $contents = '';
 
-        while (! $bestand->eof()) {
+        while (!$bestand->eof()) {
             $chunk = $bestand->fread(8192);
             if ($chunk === false) {
                 throw new InternalErrorException('PDF file could not be read.');
