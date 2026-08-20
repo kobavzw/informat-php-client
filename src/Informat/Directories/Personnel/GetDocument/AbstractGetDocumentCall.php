@@ -24,7 +24,7 @@ abstract class AbstractGetDocumentCall extends AbstractCall implements HasQueryP
 
     protected function getEndpoint(): string
     {
-        return "employees/{$this->personId}/documents/{$this->documentId}/{$this->getType()}/pdf";
+        return "employees/{$this->personId}/documents/{$this->getType()}/{$this->documentId}/pdf";
     }
 
     public function setPersonId(string $personId): static
