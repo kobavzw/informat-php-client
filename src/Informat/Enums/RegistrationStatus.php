@@ -9,4 +9,5 @@ enum RegistrationStatus: int
     case UITGESTELD = 2;
     case PARALLEL = 3;
     case AANMELDING = 4;
+    case BUITENSCHOOLS = 6;
 }
