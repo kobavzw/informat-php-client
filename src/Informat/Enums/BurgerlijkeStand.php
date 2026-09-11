@@ -10,4 +10,5 @@ enum BurgerlijkeStand: int
     case GESCHEIDEN = 4;
     case FEITELIJK_GESCHEIDEN = 5;
     case ONBEKEND = 6;
+    case FEITELIJK_SAMENWONEND = 13;
 }
