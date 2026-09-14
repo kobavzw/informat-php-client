@@ -58,7 +58,7 @@ class DocumentPersona
     /**
      * Human-readable description of the confirmation status (bevestigingStatus). null when there is no confirmation status.
      */
-    public ?BevestigingStatus $bevestigingStatusOmschrijving;
+    public ?string $bevestigingStatusOmschrijving;
 
     /**
      * Creation timestamp (UTC)
