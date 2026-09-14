@@ -5,7 +5,8 @@ namespace Koba\Informat\Enums;
 enum MessageType: int
 {
     case IMMATRICULATIE = 1;
-    case ONBEKEND_3 = 3;
+    case WIJZIGING_PERSOONSGEGEVENS = 2;
+    case WIJZIGING_VERBLIJFPLAATS = 3;
     case BANKREKENING = 5;
     case FISCALE_TOESTAND = 6;
     case ONBEKEND_7 = 7;

@@ -16,6 +16,11 @@ class DocumentPersona
     public int $documentId;
 
     /**
+     * Persona message transaction number, unique per institute within a single school year and restarting at 1 each new school year.
+     */
+    public int $berichtnr;
+
+    /**
      * Identifier of the employee this document belongs to.
      */
     public string $personId;
@@ -45,7 +50,15 @@ class DocumentPersona
      */
     public ?string $sendStatusOmschrijving;
 
+    /**
+     * Confirmation status: 0 = Not sent, 1 = Sent, 2 = Confirmed, 3 = Confirmed by secretariat.
+     */
     public ?BevestigingStatus $bevestigingStatus;
+
+    /**
+     * Human-readable description of the confirmation status (bevestigingStatus). null when there is no confirmation status.
+     */
+    public ?BevestigingStatus $bevestigingStatusOmschrijving;
 
     /**
      * Creation timestamp (UTC)
