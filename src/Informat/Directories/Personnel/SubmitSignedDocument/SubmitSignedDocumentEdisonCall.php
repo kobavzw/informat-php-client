@@ -16,7 +16,7 @@ class SubmitSignedDocumentEdisonCall extends AbstractSubmitSignedDocumentCall
         int $documentId,
         string|RlTekenStatus $status,
         string|DateTimeInterface $tijdstip,
-        ?SplFileObject $bestand = null,
+       ?string $bestand = null,
     ): self {
         return (new self($directory, $instituteNumber))
             ->setPersonId($personId)

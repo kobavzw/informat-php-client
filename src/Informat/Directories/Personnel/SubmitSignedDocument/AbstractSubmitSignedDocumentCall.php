@@ -98,7 +98,7 @@ abstract class AbstractSubmitSignedDocumentCall extends AbstractCall
     /**
      * Sets the signed PDF file. Only use this when status is Ondertekend.
      */
-    public function setBestand(?SplFileObject $bestand): static
+    public function setBestand(?string $bestand): static
     {
         if ($bestand === null) {
             $this->bestand = null;
@@ -106,20 +106,8 @@ abstract class AbstractSubmitSignedDocumentCall extends AbstractCall
             return $this;
         }
 
-        $bestand->rewind();
-        $contents = '';
-
-        while (!$bestand->eof()) {
-            $chunk = $bestand->fread(8192);
-            if ($chunk === false) {
-                throw new InternalErrorException('PDF file could not be read.');
-            }
-
-            $contents .= $chunk;
-        }
-
-        $this->bestand = $contents;
-        $this->filename = $bestand->getFilename();
+        $this->bestand = $bestand;
+        $this->filename = 'signed.pdf';
         return $this;
     }
 
