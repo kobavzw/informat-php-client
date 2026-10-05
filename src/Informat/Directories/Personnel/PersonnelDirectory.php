@@ -359,7 +359,7 @@ class PersonnelDirectory extends AbstractDirectory implements DirectoryInterface
         int $documentId,
         RlTekenStatus $status,
         DateTimeInterface $tijdstip,
-        ?SplFileObject $bestand = null,
+        ?string $bestand = null,
     ): SubmitSignedDocumentPersonaCall {
         return SubmitSignedDocumentPersonaCall::make(
             $this,
