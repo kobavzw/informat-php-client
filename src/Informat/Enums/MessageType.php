@@ -7,6 +7,7 @@ enum MessageType: int
     case IMMATRICULATIE = 1;
     case WIJZIGING_PERSOONSGEGEVENS = 2;
     case WIJZIGING_VERBLIJFPLAATS = 3;
+    case STOPZETTING_VERBLIJFPLAATS = 4;
     case BANKREKENING = 5;
     case FISCALE_TOESTAND = 6;
     case ONBEKEND_7 = 7;
