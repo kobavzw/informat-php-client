@@ -10,11 +10,13 @@ enum MessageType: int
     case STOPZETTING_VERBLIJFPLAATS = 4;
     case BANKREKENING = 5;
     case FISCALE_TOESTAND = 6;
-    case ONBEKEND_7 = 7;
+    case OVERLIJDENSDATUM = 8;
     case MULTIMEDIA = 11;
+    case WIJZIG_MULTIMEDIA = 12;
     case BEDRIJFSWAGEN = 15;
     case MELDING_INKOMENSGARANTIE = 23;
     case MELDING_PLAGE = 24;
+    case ANNULEER_PLAGE = 25;
     case MELDING_FIETSLEASE = 26;
     case WIJZIG_FIETSLEASE = 27;
     case ANNULEER_FIETSLEASE = 28;
